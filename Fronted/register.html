@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Registration | ArtHub BT24CS030</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .registration-container {
+            background: white;
+            max-width: 650px;
+            width: 100%;
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            animation: slideInUp 0.8s ease;
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.9);
+            color: #2c3e50;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .back-home:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .feature-item {
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9fa, #fff);
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .feature-item strong {
+            font-size: 0.9rem;
+        }
+
+        .feature-item small {
+            font-size: 0.7rem;
+            color: #7f8c8d;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 16px 18px;
+            border: 2px solid #e9ecef;
+            border-radius: 18px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255,107,107,0.1);
+        }
+
+        .form-group label {
+            position: absolute;
+            left: 18px;
+            top: 16px;
+            color: #7f8c8d;
+            font-weight: 500;
+            transition: all 0.3s;
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .form-group input:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group textarea:focus + label,
+        .form-group textarea:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 12px;
+            font-size: 0.75rem;
+            color: #ff6b6b;
+            background: white;
+            padding: 0 8px;
+            border-radius: 10px;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 150px;
+            border: 2px dashed #ddd;
+            border-radius: 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        .file-upload:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .file-upload input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto;
+            border: 3px solid #ff6b6b;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            box-shadow: 0 10px 25px rgba(255,107,107,0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(255,107,107,0.4);
+        }
+
+        .success-message {
+            display: none;
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            padding: 2rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 2rem;
+            animation: bounceIn 0.6s;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .change-photo-btn {
+            background: #e9ecef;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+
+        .change-photo-btn:hover {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .registration-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-home">🏠 Back to Home</a>
+
+    <div class="registration-container">
+        <h1>🎨 Become an Artist</h1>
+        <p class="subtitle">Join 500+ artists showcasing their work worldwide</p>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <span class="feature-icon">🖼️</span>
+                <strong>Portfolio</strong><br>
+                <small>Showcase unlimited works</small>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">💰</span>
+                <strong>Commissions</strong><br>
+                <small>Get paid directly</small>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">👥</span>
+                <strong>2.4K+ Audience</strong><br>
+                <small>Global collectors</small>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📱</span>
+                <strong>Mobile App</strong><br>
+                <small>Manage on the go</small>
+            </div>
+        </div>
+
+        <form id="artistForm" class="form-grid">
+            <div class="form-group">
+                <input type="text" id="name" placeholder=" " required>
+                <label for="name">Full Name</label>
+            </div>
+
+            <div class="form-group">
+                <input type="email" id="email" placeholder=" " required>
+                <label for="email">Email Address</label>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="phone" placeholder=" ">
+                <label for="phone">Phone/WhatsApp</label>
+            </div>
+
+            <div class="form-group">
+                <select id="category" required>
+                    <option value="">Select Category</option>
+                    <option value="painting">🖼️ Painting</option>
+                    <option value="photography">📷 Photography</option>
+                    <option value="digital-art">💻 Digital Art</option>
+                    <option value="music">🎵 Music</option>
+                    <option value="sculpture">🗿 Sculpture</option>
+                    <option value="video">🎥 Video Art</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <textarea id="bio" rows="3" placeholder=" "></textarea>
+                <label for="bio">Short Bio (What makes your art unique?)</label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">🔐 Create Password</label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="confirmPassword" placeholder=" " required>
+                <label for="confirmPassword">✓ Confirm Password</label>
+            </div>
+
+            <div class="form-group">
+                <div class="file-upload" id="fileUploadZone">
+                    <span class="upload-icon">📸</span>
+                    <p>Click to upload profile photo</p>
+                    <p style="font-size:0.7rem; color:#95a5a6;">JPG, PNG (Max 2MB)</p>
+                    <input type="file" id="avatar" accept="image/*">
+                </div>
+                <div id="avatarPreviewContainer" style="text-align: center; margin-top: 1rem; display: none;">
+                    <img id="avatarPreview" class="avatar-preview">
+                    <p style="font-size:0.7rem; color:#27ae60; margin-top:5px;">✓ Photo selected</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="url" id="website" placeholder=" ">
+                <label for="website">Website/Instagram</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                🎨 Register as Artist
+            </button>
+        </form>
+
+        <div id="successMessage" class="success-message">
+            <h3>🎉 Welcome to ArtHub!</h3>
+            <p>Your registration is successful!</p>
+            <p><strong>Your Artist ID:</strong> <span id="artistId"></span></p>
+            <a href="login.html" class="btn btn-primary" style="margin-top:1rem;">🔐 Login Now</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { registerArtist } from './api.js';
+
+        const form = document.getElementById('artistForm');
+        const successMsg = document.getElementById('successMessage');
+        const artistIdSpan = document.getElementById('artistId');
+        let selectedAvatarBase64 = null;
+
+        // ========== IMAGE PREVIEW ==========
+        const avatarInput = document.getElementById('avatar');
+        const fileUploadZone = document.getElementById('fileUploadZone');
+        const previewContainer = document.getElementById('avatarPreviewContainer');
+        const previewImg = document.getElementById('avatarPreview');
+
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.match('image.*')) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('❌ File too large! Maximum size is 2MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedAvatarBase64 = e.target.result;
+                    previewImg.src = selectedAvatarBase64;
+                    previewContainer.style.display = 'block';
+                    fileUploadZone.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function resetUpload() {
+            selectedAvatarBase64 = null;
+            previewContainer.style.display = 'none';
+            fileUploadZone.style.display = 'flex';
+            avatarInput.value = '';
+        }
+
+        const changeBtn = document.createElement('button');
+        changeBtn.type = 'button';
+        changeBtn.textContent = '📷 Change Photo';
+        changeBtn.className = 'change-photo-btn';
+        changeBtn.onclick = resetUpload;
+        previewContainer.appendChild(changeBtn);
+
+        function getDefaultAvailability(category) {
+            const map = {
+                painting: 'Open for commissions',
+                photography: 'Available for shoots',
+                'digital-art': 'NFT + Commissions',
+                music: 'Original compositions',
+                sculpture: 'Custom orders',
+                video: 'Video projects'
+            };
+            return map[category] || 'Available';
+        }
+
+        function getCategoryDisplay(category) {
+            const map = {
+                painting: 'Painter',
+                photography: 'Photographer',
+                'digital-art': 'Digital Artist',
+                music: 'Musician',
+                sculpture: 'Sculptor',
+                video: 'Video Artist'
+            };
+            return map[category] || category;
+        }
+
+        // ========== FORM SUBMIT WITH API ==========
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const category = document.getElementById('category').value;
+            const bio = document.getElementById('bio').value;
+            const website = document.getElementById('website').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!name || !email || !category) {
+                alert('❌ Please fill all required fields!');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('❌ Passwords do not match!');
+                return;
+            }
+            
+            if (password.length < 4) {
+                alert('❌ Password must be at least 4 characters');
+                return;
+            }
+            
+            if (!selectedAvatarBase64) {
+                alert('❌ Please upload a profile photo!');
+                return;
+            }
+            
+            const artistData = {
+                name: name,
+                email: email,
+                password: password,
+                phone: phone || '',
+                category: category,
+                availability: getDefaultAvailability(category),
+                bio: bio || `I am a passionate ${getCategoryDisplay(category)} based in India.`,
+                imageData: selectedAvatarBase64,
+                website: website || ''
+            };
+            
+            try {
+                const result = await registerArtist(artistData);
+                
+                artistIdSpan.textContent = result.artistId;
+                form.style.display = 'none';
+                successMsg.style.display = 'block';
+                successMsg.scrollIntoView({ behavior: 'smooth' });
+                
+                showToast(`✅ Welcome ${name}! Registration successful.`);
+            } catch (error) {
+                alert(`❌ Registration failed: ${error.message}`);
+            }
+        });
+        
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.cssText = `
+                position: fixed; bottom: 20px; right: 20px; 
+                background: #27ae60; color: white; padding: 12px 24px; 
+                border-radius: 25px; font-weight: bold; z-index: 10000;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+                animation: slideInRight 0.5s;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 4000);
+        }
+    </script>
+</body>
+</html>

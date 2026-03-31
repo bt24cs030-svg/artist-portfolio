@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Artist Portfolio & Showcase System | BT24CS030</title>
+    <style>
+        /* ========== ALL YOUR EXISTING STYLES REMAIN SAME ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #2c3e50;
+            background: #fefefe;
+        }
+
+        .navbar-cart {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .navbar-cart:hover {
+            transform: scale(1.05);
+            background: #ff5252;
+        }
+
+        .hero {
+            min-height: 90vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            overflow: hidden;
+            background: url('https://images.pexels.com/photos/1567069/pexels-photo-1567069.jpeg?w=1920&h=1080&fit=crop') center/cover no-repeat;
+            background-attachment: fixed;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero h1 {
+            font-size: 3.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero p {
+            font-size: 1.4rem;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: #ff4757;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #2c3e50;
+            transform: translateY(-3px);
+        }
+
+        .btn-small {
+            padding: 8px 18px;
+            font-size: 0.85rem;
+        }
+
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        section {
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 2.5rem;
+            color: #2c3e50;
+            position: relative;
+        }
+
+        h2:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #ff6b6b;
+            margin: 12px auto 0;
+            border-radius: 4px;
+        }
+
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .artist-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #eee;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .artist-img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            margin: 0 auto 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: bold;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .artist-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #ff6b6b20;
+            color: #ff6b6b;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        .artworks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 2rem;
+            margin-top: 1rem;
+        }
+
+        .artwork-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .artwork-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .artwork-img {
+            width: 100%;
+            height: 210px;
+            background: linear-gradient(145deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            transition: 0.2s;
+            overflow: hidden;
+        }
+
+        .artwork-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .artwork-info {
+            padding: 1.5rem;
+        }
+
+        .art-price {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #27ae60;
+            margin: 12px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filters {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .filter-btn {
+            padding: 10px 24px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .search-filter-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #ff6b6b;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.1);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-cat-btn {
+            padding: 8px 20px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-cat-btn.active,
+        .filter-cat-btn:hover {
+            background: #ff6b6b;
+            color: white;
+            border-color: #ff6b6b;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .action-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-radius: 28px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-card h3 {
+            font-size: 1.7rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-modal {
+            display: none;
+            position: fixed;
+            z-index: 1100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+        }
+
+        .cart-content {
+            background: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 650px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .cart-total {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: right;
+            margin: 1.5rem 0;
+        }
+
+        .checkout-btn {
+            background: #ff6b6b;
+            color: white;
+            padding: 14px;
+            width: 100%;
+            border: none;
+            border-radius: 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .checkout-btn:hover {
+            background: #ff4757;
+            transform: scale(0.98);
+        }
+
+        .order-success {
+            display: none;
+            text-align: center;
+            padding: 1.2rem;
+            background: #d4edda;
+            color: #155724;
+            border-radius: 20px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+
+        .footer {
+            background: #1e2a36;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 220px;
+            }
+        }
+
+        /* Music Card Styles */
+        .artwork-card.music-card {
+            background: linear-gradient(135deg, #1e2a36, #2c3e50);
+            color: white;
+        }
+
+        .artwork-card.music-card audio {
+            width: 100%;
+            border-radius: 8px;
+            margin-top: 0.5rem;
+        }
+
+        .artwork-card.music-card .art-price {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 0.8rem;
+            margin-top: 0.8rem;
+        }
+
+        /* Audio Player Styling */
+        audio::-webkit-media-controls-panel {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        audio::-webkit-media-controls-current-time-display,
+        audio::-webkit-media-controls-time-remaining-display {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar-cart" onclick="toggleCart()">
+        🛒 <span id="cartCount">0</span>
+    </div>
+
+    <div id="cartModal" class="cart-modal">
+        <div class="cart-content">
+            <h2 style="margin-top:0;">🛍️ Your Cart</h2>
+            <div id="cartItems"></div>
+            <div class="cart-total" id="cartTotal">₹0</div>
+            <div id="orderSuccessMsg" class="order-success"></div>
+            <button class="checkout-btn" onclick="completeOrder()">✅ Complete Order</button>
+            <button onclick="toggleCart()"
+                style="margin-top: 15px; background: #95a5a6; color:white; border:none; padding:10px; border-radius:40px; width:100%; cursor:pointer;">Close</button>
+        </div>
+    </div>
+
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1>🎨 Discover Amazing Artists</h1>
+            <p>World's Best Paintings • Photography • Music • Digital Art</p>
+            <div class="cta-buttons" id="ctaButtons">
+                <button class="btn btn-primary" onclick="showGallery()">Browse Gallery</button>
+                <button class="btn btn-secondary" onclick="window.location.href='register.html'">📝 Register as
+                    Artist</button>
+                <button class="btn btn-primary" onclick="window.location.href='login.html'">🔐 Artist Login</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="container">
+        <h2>⭐ Featured Artists</h2>
+        <div class="search-filter-container">
+            <input type="text" id="searchArtist" class="search-input" placeholder="🔍 Search artists by name...">
+            <div class="category-filters">
+                <button class="filter-cat-btn active" data-cat="all">All</button>
+                <button class="filter-cat-btn" data-cat="painting">🖼️ Painters</button>
+                <button class="filter-cat-btn" data-cat="photography">📷 Photographers</button>
+                <button class="filter-cat-btn" data-cat="digital-art">💻 Digital Artists</button>
+                <button class="filter-cat-btn" data-cat="music">🎵 Musicians</button>
+            </div>
+        </div>
+        <div class="artists-grid" id="featuredArtists"></div>
+    </section>
+
+    <section class="container">
+        <h2>🎨 Latest Artworks</h2>
+        <div class="filters" id="filterContainer">
+            <button class="filter-btn active" data-category="all">All</button>
+            <button class="filter-btn" data-category="painting">🖼️ Painting</button>
+            <button class="filter-btn" data-category="photography">📷 Photography</button>
+            <button class="filter-btn" data-category="music">🎵 Music</button>
+            <button class="filter-btn" data-category="digital-art">💻 Digital Art</button>
+        </div>
+        <div class="artworks-grid" id="latestArtworks"></div>
+    </section>
+
+    <section class="container">
+        <h2>🚀 Quick Actions</h2>
+        <div class="quick-actions">
+            <div class="action-card" onclick="window.location.href='login.html'">
+                <h3>👨‍🎨 For Artists</h3>
+                <p>Upload Artwork • Set Pricing • Manage Profile</p>
+                <button class="btn btn-primary">Artist Dashboard</button>
+            </div>
+            <div class="action-card"
+                onclick="document.getElementById('latestArtworks').scrollIntoView({behavior:'smooth'})">
+                <h3>👤 For Clients</h3>
+                <p>Commission Artists • Buy Art • Send Inquiry</p>
+                <button class="btn btn-primary">Start Shopping</button>
+            </div>
+            <div class="action-card" onclick="showGallery()">
+                <h3>🔍 Explore</h3>
+                <p>Full Gallery • Categories • Top Works</p>
+                <button class="btn btn-primary">Browse Gallery</button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="index.html">🏠 Home</a>
+            <a href="#latestArtworks">Gallery</a>
+            <a href="#">Artists</a>
+            <a href="register.html">Register</a>
+            <a href="login.html">Login</a>
+            <a href="#" id="adminLink" style="display: none; color: #ff6b6b;">🛡️ Admin</a>
+        </div>
+        <p><strong>BT24CS030 | Madhurendra Kumar | NIT Mizoram</strong><br>
+            Artist Portfolio & Showcase System | &copy; 2026 ArtHub | Made with ❤️</p>
+    </footer>
+
+    <script type="module">
+        // ========== IMPORT API FUNCTIONS ==========
+        import { getAllArtists, getAllArtworks } from './api.js';
+
+        // ========== GLOBAL VARIABLES ==========
+        let cart = JSON.parse(localStorage.getItem('artCart') || '[]');
+        let currentFilter = "all";
+        let currentSearchTerm = '';
+        let currentCategoryFilter = 'all';
+        let allArtists = [];
+        let allArtworks = [];
+
+        function isLoggedIn() {
+            return {
+                admin: sessionStorage.getItem('isAdmin') === 'true',
+                artist: sessionStorage.getItem('loggedInArtist') !== null
+            };
+        }
+        // Show admin link only if admin is not logged in and artist is not logged in
+        const { admin, artist } = isLoggedIn();
+        if (!admin && !artist) {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) {
+                adminLink.style.display = 'inline-block';
+                adminLink.href = 'admin-login.html';
+            }
+        }
+
+        // Add admin button to hero section if not logged in
+        const isAdminLoggedInBtn = sessionStorage.getItem('isAdmin') === 'true';
+        const isArtistLoggedInBtn = sessionStorage.getItem('loggedInArtist') !== null;
+
+        if (!isAdminLoggedInBtn && !isArtistLoggedInBtn) {
+            const ctaButtons = document.getElementById('ctaButtons');
+            if (ctaButtons) {
+                const adminBtn = document.createElement('button');
+                adminBtn.className = 'btn btn-secondary';
+                adminBtn.style.borderColor = '#ff6b6b';
+                adminBtn.style.color = '#ff6b6b';
+                adminBtn.innerHTML = '🛡️ Admin';
+                adminBtn.onclick = () => window.location.href = 'admin-login.html';
+                ctaButtons.appendChild(adminBtn);
+            }
+        }
+
+        // ========== HELPER FUNCTIONS ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function getCategoryName(category) {
+            const map = {
+                painting: 'Painter',
+                photography: 'Photographer',
+                music: 'Musician',
+                'digital-art': 'Digital Artist',
+                video: 'Video Creator'
+            };
+            return map[category] || category;
+        }
+
+        // ========== FILTER ARTISTS ==========
+        function filterArtists() {
+            let filtered = [...allArtists];
+
+            if (currentSearchTerm) {
+                filtered = filtered.filter(artist =>
+                    artist.name.toLowerCase().includes(currentSearchTerm.toLowerCase())
+                );
+            }
+
+            if (currentCategoryFilter !== 'all') {
+                filtered = filtered.filter(artist =>
+                    artist.category === currentCategoryFilter
+                );
+            }
+
+            const grid = document.getElementById('featuredArtists');
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; padding:2rem;">🎨 No artists found matching your search.</p>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(artist => {
+                let avatarHtml = '';
+                if (artist.image_data) {
+                    avatarHtml = `<img src="${artist.image_data}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                } else {
+                    avatarHtml = `<div style="font-size:2.5rem; font-weight:bold;">${artist.name.charAt(0).toUpperCase()}</div>`;
+                }
+                return `
+                <div class="artist-card">
+                    <div class="artist-img">${avatarHtml}</div>
+                    <h3>${escapeHtml(artist.name)}</h3>
+                    <div class="category-badge">${getCategoryName(artist.category)}</div>
+                    <p><small>📌 ${escapeHtml(artist.availability || 'Available')}</small></p>
+                    <a href="artist-profile.html?artist=${artist.artist_id}" class="btn btn-primary btn-small">👤 View Profile</a>
+                </div>
+            `;
+            }).join('');
+        }
+
+        // ========== LOAD ARTISTS FROM API ==========
+        async function loadFeaturedArtists() {
+            const grid = document.getElementById('featuredArtists');
+            grid.innerHTML = '<p style="text-align:center; padding:2rem;">⏳ Loading artists...</p>';
+
+            try {
+                const artists = await getAllArtists();
+                if (!artists || artists.length === 0) {
+                    grid.innerHTML = '<p style="text-align:center; padding:2rem;">✨ No artists yet. Be the first to register!</p>';
+                    return;
+                }
+                allArtists = artists;
+                filterArtists();
+            } catch (error) {
+                console.error('Error loading artists:', error);
+                grid.innerHTML = '<p style="text-align:center; padding:2rem; color:red;">❌ Failed to load artists</p>';
+            }
+        }
+
+
+        // ========== RENDER ARTWORKS ==========
+        function renderArtworks() {
+            let filtered = allArtworks;
+            if (currentFilter !== 'all') {
+                filtered = allArtworks.filter(aw => aw.category === currentFilter);
+            }
+
+            const grid = document.getElementById('latestArtworks');
+            if (!filtered.length) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:2rem;">🎨 No artworks in this category yet.</p>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(aw => {
+                // Handle different media types
+                let mediaHtml = '';
+
+                if (aw.category === 'music') {
+                    // Music: Show audio player with waveform
+                    const audioUrl = aw.image_url || aw.image_data || '';
+                //     if (!audioUrl) {
+                //         mediaHtml = `<div>No audio available</div>`;
+                //     } else {
+                //         mediaHtml = `
+                //           <div>
+                //         <audio controls>
+                //          <source src="${audioUrl}" type="audio/mpeg">
+                //         </audio>
+                //   </div>
+                // `;
+                //     }
+                  
+                    mediaHtml = `
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1rem; border-radius: 12px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span style="font-size: 2rem;">🎵</span>
+                        <span style="font-weight: bold;">${escapeHtml(aw.title)}</span>
+                    </div>
+                    <audio controls style="width: 100%; border-radius: 8px;">
+                        <source src="${audioUrl}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                    <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.7rem; color: #7f8c8d;">
+                        <span>🎧 ${escapeHtml(aw.artist_name || 'Artist')}</span>
+                        <span>⏱️ ${aw.duration || '3:45'}</span>
+                    </div>
+                </div>
+            `;
+                } else if (aw.category === 'video') {
+                    // Video: Show video player
+                    const videoUrl = aw.image_url || aw.image_data || '';
+                    mediaHtml = `
+                <video controls style="width: 100%; border-radius: 12px; margin-bottom: 0.5rem;">
+                    <source src="${videoUrl}" type="video/mp4">
+                    Your browser does not support the video element.
+                </video>
+            `;
+                } else {
+                    // Image: Show image
+                    if (aw.image_url) {
+                        mediaHtml = `<img src="${aw.image_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                    } else if (aw.image_data) {
+                        mediaHtml = `<img src="${aw.image_data}" style="width:100%; height:100%; object-fit:cover;">`;
+                    } else {
+                        mediaHtml = `<div style="font-size:4rem;">🎨</div>`;
+                    }
+                }
+
+                // For music and video, use different card layout
+                if (aw.category === 'music') {
+                    return `
+                <div class="artwork-card" style="background: linear-gradient(135deg, #1e2a36, #2c3e50); color: white;">
+                    <div class="artwork-info">
+                        ${mediaHtml}
+                        <div class="art-price" style="margin-top: 1rem;">
+                            ₹${Number(aw.price||0)}
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn btn-primary btn-small" onclick="addToCart('${aw.artwork_id}')" style="background:#ff6b6b;">🛒 Add</button>
+                                <button class="btn btn-primary btn-small" onclick="buyNowWithPayment('${aw.artwork_id}')" style="background:#27ae60;">💳 Buy Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+                }
+
+                // Default card for images
+                return `
+            <div class="artwork-card">
+                <div class="artwork-img">${mediaHtml}</div>
+                <div class="artwork-info">
+                    <h3>${escapeHtml(aw.title)}</h3>
+                    <p style="color:#7f8c8d;">🎨 ${escapeHtml(aw.artist_name || 'Artist')}</p>
+                    <div class="art-price">
+                      ₹${Number(aw.price||0)}
+                        <div style="display:flex; gap:8px;">
+                            <button class="btn btn-primary btn-small" onclick="addToCart('${aw.artwork_id}')">🛒 Add</button>
+                            <button class="btn btn-primary btn-small" onclick="buyNowWithPayment('${aw.artwork_id}')" style="background:#27ae60; color:white;">💳 Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // ========== LOAD ARTWORKS FROM API ==========
+        async function loadArtworks() {
+            const grid = document.getElementById('latestArtworks');
+            grid.innerHTML = '<p style="text-align:center; padding:2rem;">⏳ Loading artworks...</p>';
+
+            try {
+                allArtworks = await getAllArtworks();
+                renderArtworks();
+            } catch (error) {
+                console.error('Error loading artworks:', error);
+                grid.innerHTML = '<p style="text-align:center; padding:2rem; color:red;">❌ Failed to load artworks</p>';
+            }
+        }
+
+
+        // ========== CART FUNCTIONS ==========
+        function updateCartDisplay() {
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) cartCountSpan.innerText = cart.reduce((sum, i) => sum + i.quantity, 0);
+
+            const cartItemsDiv = document.getElementById('cartItems');
+            const cartTotalSpan = document.getElementById('cartTotal');
+            if (!cartItemsDiv) return;
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<div style="text-align:center; padding:2rem;">🛒 Your cart is empty. Add beautiful artworks!</div>';
+                cartTotalSpan.innerText = 'Total: ₹0';
+                return;
+            }
+
+            cartItemsDiv.innerHTML = cart.map(item => `
+            <div class="cart-item">
+                <div><strong>${escapeHtml(item.title)}</strong><br><small>₹${item.price} x ${item.quantity}</small></div>
+                <div>
+                    <button onclick="updateQty('${item.id}', -1)" style="background:#ff6b6b; border:none; color:white; width:28px; border-radius:30px;">−</button>
+                    <span style="margin:0 8px;">${item.quantity}</span>
+                    <button onclick="updateQty('${item.id}', 1)" style="background:#27ae60; border:none; color:white; width:28px; border-radius:30px;">+</button>
+                </div>
+            </div>
+        `).join('');
+            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            cartTotalSpan.innerText = `Total: ₹${total}`;
+        }
+
+        window.addToCart = function (artworkId) {
+            const artwork = allArtworks.find(a => a.artwork_id === artworkId);
+            if (!artwork) return alert('Artwork not found!');
+
+            const existing = cart.find(i => i.id === artworkId);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({ id: artworkId, title: artwork.title, price: artwork.price, quantity: 1 });
+            }
+            localStorage.setItem('artCart', JSON.stringify(cart));
+            updateCartDisplay();
+            showToast(`✅ ${artwork.title} added to cart`);
+        };
+
+        window.updateQty = function (artworkId, delta) {
+            const itemIndex = cart.findIndex(i => i.id === artworkId);
+            if (itemIndex === -1) return;
+            const newQty = cart[itemIndex].quantity + delta;
+            if (newQty <= 0) {
+                cart.splice(itemIndex, 1);
+            } else {
+                cart[itemIndex].quantity = newQty;
+            }
+            localStorage.setItem('artCart', JSON.stringify(cart));
+            updateCartDisplay();
+        };
+
+        window.toggleCart = function () {
+            const modal = document.getElementById('cartModal');
+            if (modal.style.display === 'block' ) {
+                modal.style.display = 'none';
+            } else {
+                modal.style.display = 'block';
+                updateCartDisplay();
+            }
+        };
+
+        window.completeOrder = function () {
+            if (cart.length === 0) {
+                alert('Cart is empty! Add some beautiful art first.');
+                return;
+            }
+            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            showCartPaymentModal(total, cart);
+        };
+
+        function showCartPaymentModal(totalAmount, cartItems) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); display: flex; align-items: center;
+            justify-content: center; z-index: 20000; backdrop-filter: blur(3px);
+        `;
+
+            let cartItemsHtml = '';
+            cartItems.forEach(item => {
+                cartItemsHtml += `
+                <div style="display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid #eee;">
+                    <div>
+                        <strong>${escapeHtml(item.title)}</strong>
+                        <p style="font-size: 0.8rem; color: #7f8c8d;">₹${item.price} x ${item.quantity}</p>
+                    </div>
+                    <span style="color:#27ae60; font-weight:bold;">₹${item.price * item.quantity}</span>
+                </div>
+            `;
+            });
+
+            modal.innerHTML = `
+            <div style="background: white; border-radius: 25px; max-width: 500px; width: 90%; overflow: hidden;">
+                <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1.5rem; text-align: center; color: white;">
+                    <h2 style="margin: 0;">🛍️ Complete Your Order</h2>
+                    <p style="margin-top: 0.5rem;">${cartItems.length} item(s) in cart</p>
+                    <p style="font-size: 1.8rem; font-weight: bold;">₹${totalAmount}</p>
+                    <p style="font-size: 0.8rem; opacity: 0.8;">🎨 Demo Payment • No Real Money</p>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <div style="max-height: 250px; overflow-y: auto; margin-bottom: 1rem;">${cartItemsHtml}</div>
+                    <div style="background: #f8f9fa; padding: 0.8rem; border-radius: 12px; margin: 1rem 0; text-align: center;">
+                        <strong>Total Amount: ₹${totalAmount}</strong>
+                    </div>
+                    <p style="text-align: center; color: #7f8c8d; margin-bottom: 1rem;">Select Payment Method (Demo)</p>
+                    <div style="display: grid; gap: 0.8rem;">
+                        <button onclick="processDemoCartPayment('googlepay', ${totalAmount})" style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                            <span style="font-size: 1.8rem;">🟢</span>
+                            <div style="flex: 1; text-align: left;"><strong>Google Pay</strong><p style="font-size: 0.75rem; color: #7f8c8d;">Demo Payment</p></div>
+                            <span>→</span>
+                        </button>
+                        <button onclick="processDemoCartPayment('phonepe', ${totalAmount})" style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                            <span style="font-size: 1.8rem;">📱</span>
+                            <div style="flex: 1; text-align: left;"><strong>PhonePe</strong><p style="font-size: 0.75rem; color: #7f8c8d;">Demo Payment</p></div>
+                            <span>→</span>
+                        </button>
+                        <button onclick="processDemoCartPayment('paytm', ${totalAmount})" style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                            <span style="font-size: 1.8rem;">🔵</span>
+                            <div style="flex: 1; text-align: left;"><strong>Paytm</strong><p style="font-size: 0.75rem; color: #7f8c8d;">Demo Payment</p></div>
+                            <span>→</span>
+                        </button>
+                    </div>
+                    <div style="margin-top: 1.5rem; text-align: center;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="background: #95a5a6; color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        `;
+            document.body.appendChild(modal);
+            window.cartPaymentModal = modal;
+        }
+
+        window.processDemoCartPayment = function (method, totalAmount) {
+            if (window.cartPaymentModal) window.cartPaymentModal.remove();
+            const cartModal = document.getElementById('cartModal');
+            if (cartModal) cartModal.style.display = 'none';
+
+            const orderId = 'ORD' + Date.now().toString().slice(-8);
+            const paymentId = 'DEMO' + Math.random().toString(36).substr(2, 8).toUpperCase();
+
+            const cartItems = [...cart];
+            const total = totalAmount;
+
+            const newOrder = {
+                id: orderId,
+                paymentId: paymentId,
+                items: cartItems.map(item => ({ title: item.title, price: item.price, quantity: item.quantity })),
+                totalAmount: total,
+                status: 'completed',
+                date: new Date().toISOString()
+            };
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            orders.push(newOrder);
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            cart = [];
+            localStorage.setItem('artCart', JSON.stringify(cart));
+            updateCartDisplay();
+
+            showCartSuccess(total, paymentId, orderId, cartItems.length);
+        };
+
+        function showCartSuccess(totalAmount, paymentId, orderId, itemCount) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; align-items: center;
+            justify-content: center; z-index: 20002;
+        `;
+            modal.innerHTML = `
+            <div style="background: white; padding: 2rem; border-radius: 20px; max-width: 400px; width: 90%; text-align: center;">
+                <div style="font-size: 4rem;">🎉</div>
+                <h2 style="color: #27ae60;">Order Placed Successfully!</h2>
+                <p>${itemCount} item(s) purchased</p>
+                <p style="font-size: 1.5rem; font-weight: bold; color: #27ae60;">₹${totalAmount}</p>
+                <div style="background: #f8f9fa; padding: 0.8rem; border-radius: 12px; margin: 1rem 0;">
+                    <p><strong>Order ID:</strong> ${orderId}</p>
+                    <p><strong>Transaction ID:</strong> ${paymentId}</p>
+                </div>
+                <p>Thank you for supporting artists! 🎨</p>
+                <p style="font-size: 0.7rem; color: #95a5a6;">🎓 Demo Transaction • No Real Money Charged</p>
+                <button onclick="this.parentElement.parentElement.remove(); window.location.href='index.html';" style="margin-top: 1rem; background: #ff6b6b; color: white; border: none; padding: 10px 30px; border-radius: 25px; cursor: pointer;">🏠 Go to Home</button>
+            </div>
+        `;
+            document.body.appendChild(modal);
+        }
+
+        // ========== UPI PAYMENT SYSTEM (DEMO) ==========
+        window.buyNowWithPayment = function (artworkId) {
+            const artwork = allArtworks.find(a => a.artwork_id === artworkId);
+            if (!artwork) { alert('Artwork not found!'); return; }
+            showUPIPaymentModal(artwork.title, artwork.price, artworkId);
+        };
+
+        function showUPIPaymentModal(artworkTitle, amount, artworkId) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); display: flex; align-items: center;
+        justify-content: center; z-index: 20000; backdrop-filter: blur(3px);
+    `;
+
+            modal.innerHTML = `
+        <div style="background: white; border-radius: 25px; max-width: 450px; width: 90%; overflow: hidden;">
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1.5rem; text-align: center; color: white;">
+                <h2 style="margin: 0;">💳 UPI Payment</h2>
+                <p style="margin-top: 0.5rem;">${escapeHtml(artworkTitle)}</p>
+                <p style="font-size: 1.8rem; font-weight: bold;">₹${amount}</p>
+                <p style="font-size: 0.7rem; opacity: 0.8;">🎓 Demo Payment • No Real Money</p>
+            </div>
+            <div style="padding: 1.5rem;">
+                <p style="text-align: center; color: #7f8c8d; margin-bottom: 1rem;">Select UPI App (Demo)</p>
+                <div style="display: grid; gap: 0.8rem;">
+                    <button onclick="processUPIPayment('googlepay', '${artworkTitle}', ${amount}, '${artworkId}')" 
+                            style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                        <span style="font-size: 1.8rem;">🟢</span>
+                        <div><strong>Google Pay</strong><p style="font-size:0.75rem;">Demo Payment</p></div>
+                        <span>→</span>
+                    </button>
+                    <button onclick="processUPIPayment('phonepe', '${artworkTitle}', ${amount}, '${artworkId}')" 
+                            style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                        <span style="font-size: 1.8rem;">📱</span>
+                        <div><strong>PhonePe</strong><p style="font-size:0.75rem;">Demo Payment</p></div>
+                        <span>→</span>
+                    </button>
+                    <button onclick="processUPIPayment('paytm', '${artworkTitle}', ${amount}, '${artworkId}')" 
+                            style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                        <span style="font-size: 1.8rem;">🔵</span>
+                        <div><strong>Paytm</strong><p style="font-size:0.75rem;">Demo Payment</p></div>
+                        <span>→</span>
+                    </button>
+                    <button onclick="processUPIPayment('amazonpay', '${artworkTitle}', ${amount}, '${artworkId}')" 
+                            style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                        <span style="font-size: 1.8rem;">🟠</span>
+                        <div><strong>Amazon Pay</strong><p style="font-size:0.75rem;">Demo Payment</p></div>
+                        <span>→</span>
+                    </button>
+                    <button onclick="processUPIPayment('upi', '${artworkTitle}', ${amount}, '${artworkId}')" 
+                            style="display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem; border: 2px solid #eee; border-radius: 15px; background: white; cursor: pointer;">
+                        <span style="font-size: 1.8rem;">🇮🇳</span>
+                        <div><strong>Any UPI App</strong><p style="font-size:0.75rem;">Demo Payment</p></div>
+                        <span>→</span>
+                    </button>
+                </div>
+                <div style="margin-top: 1.5rem; text-align: center;">
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                            style="background: #95a5a6; color: white; border: none; padding: 10px 25px; border-radius: 25px; cursor: pointer;">Cancel</button>
+                </div>
+                <div style="margin-top: 1rem; padding: 0.8rem; background: #f8f9fa; border-radius: 12px; text-align: center;">
+                    <small>🎓 Demo Mode • No Real Money Transaction</small>
+                </div>
+            </div>
+        </div>
+    `;
+            document.body.appendChild(modal);
+        }
+
+        // ========== UPI PAYMENT FUNCTIONS ==========
+        window.processUPIPayment = function (method, artworkTitle, amount, artworkId) {
+            // Close the UPI modal
+
+
+            const upiModal = document.querySelector('div[style*="backdrop-filter: blur(3px)"]');
+            if (upiModal) upiModal.remove();
+
+            // Show processing
+            showPaymentProcessing(artworkTitle, amount, method);
+
+            // Simulate payment processing
+            setTimeout(() => {
+                const processing = document.getElementById('paymentProcessing');
+                if (processing) processing.remove();
+
+                // Generate order
+                const orderId = 'ORD' + Date.now().toString().slice(-8);
+                const paymentId = 'DEMO' + Math.random().toString(36).substr(2, 8).toUpperCase();
+
+                // Save order
+                const newOrder = {
+                    id: orderId,
+                    paymentId: paymentId,
+                    artworkTitle: artworkTitle,
+                    amount: amount,
+                    method: method,
+                    status: 'completed',
+                    date: new Date().toISOString()
+                };
+
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                orders.push(newOrder);
+                localStorage.setItem('orders', JSON.stringify(orders));
+
+                // Remove from cart if exists
+                let cart = JSON.parse(localStorage.getItem('artCart') || '[]');
+                cart = cart.filter(item => item.id !== artworkId);
+                localStorage.setItem('artCart', JSON.stringify(cart));
+
+                // Update cart display
+                if (typeof updateCartDisplay === 'function') {
+                    updateCartDisplay();
+                }
+
+                // Show success modal
+                showPaymentSuccessModal(artworkTitle, amount, paymentId, orderId);
+
+            }, 2000);
+        };
+
+        function showPaymentProcessing(artworkTitle, amount, method) {
+            const methodNames = {
+                googlepay: 'Google Pay',
+                phonepe: 'PhonePe',
+                paytm: 'Paytm',
+                amazonpay: 'Amazon Pay',
+                upi: 'UPI'
+            };
+
+            const processing = document.createElement('div');
+            processing.id = 'paymentProcessing';
+            processing.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); display: flex; align-items: center;
+        justify-content: center; z-index: 20001;
+    `;
+            processing.innerHTML = `
+        <div style="background: white; padding: 2rem; border-radius: 20px; text-align: center; max-width: 300px;">
+            <div style="font-size: 3rem;">⏳</div>
+            <h3>Processing Payment</h3>
+            <p style="color: #7f8c8d; margin: 1rem 0;">${methodNames[method] || 'UPI'}</p>
+            <p style="font-size: 0.9rem; font-weight: bold;">${escapeHtml(artworkTitle)}</p>
+            <p style="font-size: 1.2rem; font-weight: bold; color: #27ae60;">₹${amount}</p>
+            <div class="loader" style="margin: 1rem auto; width: 30px; height: 30px; border: 3px solid #f3f3f3; border-top: 3px solid #ff6b6b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            <p style="font-size: 0.8rem; color: #95a5a6;">Demo Transaction • No Real Money</p>
+        </div>
+    `;
+            document.body.appendChild(processing);
+
+            if (!document.getElementById('spinnerStyle')) {
+                const style = document.createElement('style');
+                style.id = 'spinnerStyle';
+                style.textContent = `@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`;
+                document.head.appendChild(style);
+            }
+        }
+
+        function showPaymentSuccessModal(artworkTitle, amount, paymentId, orderId) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6); display: flex; align-items: center;
+        justify-content: center; z-index: 20002;
+    `;
+            modal.innerHTML = `
+        <div style="background: white; padding: 2rem; border-radius: 20px; max-width: 400px; width: 90%; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎉</div>
+            <h2 style="color: #27ae60;">Payment Successful!</h2>
+            <p style="margin: 1rem 0;"><strong>${escapeHtml(artworkTitle)}</strong></p>
+            <p style="font-size: 1.8rem; font-weight: bold; color: #27ae60;">₹${amount}</p>
+            <div style="background: #f8f9fa; padding: 0.8rem; border-radius: 12px; margin: 1rem 0;">
+                <p><strong>Order ID:</strong> ${orderId}</p>
+                <p><strong>Transaction ID:</strong> ${paymentId}</p>
+            </div>
+            <p>Thank you for supporting artists! 🎨</p>
+            <p style="font-size: 0.7rem; color: #95a5a6;">🎓 Demo Transaction • No Real Money Charged</p>
+            <button onclick="this.parentElement.parentElement.remove(); window.location.href='index.html';" 
+                    style="margin-top: 1rem; background: #ff6b6b; color: white; border: none; padding: 10px 30px; border-radius: 25px; cursor: pointer;">
+                🏠 Go to Home
+            </button>
+        </div>
+    `;
+            document.body.appendChild(modal);
+        }
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.innerText = msg;
+            toast.style.cssText = `position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 40px; z-index: 1200; font-weight: bold;`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // window.showGallery = function () {
+        //     document.getElementById('latestArtworks')?.scrollIntoView({ behavior: 'smooth' });
+        // };
+
+        window.showGallery = function () {
+            const el = document.getElementById('latestArtworks');
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        };
+
+        function setupFilters() {
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    btns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentFilter = btn.getAttribute('data-category');
+                    renderArtworks();
+                });
+            });
+        }
+
+        function setupSearchAndFilter() {
+            const searchInput = document.getElementById('searchArtist');
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    currentSearchTerm = e.target.value;
+                    filterArtists();
+                });
+            }
+            const filterBtns = document.querySelectorAll('.filter-cat-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentCategoryFilter = btn.dataset.cat;
+                    filterArtists();
+                });
+            });
+        }
+
+        async function init() {
+            await loadFeaturedArtists();
+            await loadArtworks();
+            setupFilters();
+            setupSearchAndFilter();
+            updateCartDisplay();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

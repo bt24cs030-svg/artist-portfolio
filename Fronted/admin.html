@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | ArtHub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f8f9fa;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50, #1a252f);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            border: none;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #95a5a6;
+        }
+
+        .refresh-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .refresh-btn:hover {
+            background: #2980b9;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .stats-cards {
+                gap: 1rem;
+            }
+
+            .stat-card {
+                padding: 1rem;
+            }
+
+            .stat-number {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-header">
+        <h1>🛡️ ArtHub Admin Panel</h1>
+        <div>
+            <button onclick="refreshData()"
+                style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; margin-right: 1rem;">🔄
+                Refresh</button>
+            <a href="index.html" style="color: white; text-decoration: none;">← Back to Site</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-cards" id="statsCards">
+            <div class="stat-card">
+                <div class="stat-number" id="totalArtists">0</div>
+                <div>Total Artists</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalArtworks">0</div>
+                <div>Total Artworks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalOrders">0</div>
+                <div>Total Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="totalRevenue">₹0</div>
+                <div>Total Revenue</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="artists">👥 Artists</button>
+            <button class="tab-btn" data-tab="artworks">🖼️ Artworks</button>
+            <button class="tab-btn" data-tab="orders">📋 Orders</button>
+            <button class="tab-btn" data-tab="notifications">📧 Notifications</button>
+        </div>
+
+        <div id="artists" class="tab-content active">
+            <h3>All Artists</h3>
+            <div id="artistsList" class="loading">Loading artists...</div>
+        </div>
+
+        <div id="artworks" class="tab-content">
+            <h3>All Artworks</h3>
+            <div id="artworksList" class="loading">Loading artworks...</div>
+        </div>
+
+        <div id="orders" class="tab-content">
+            <h3>All Orders</h3>
+            <div id="ordersList" class="loading">Loading orders...</div>
+        </div>
+
+        <div id="notifications" class="tab-content">
+            <h3>Notifications</h3>
+            <div id="notificationsList" class="loading">Loading notifications...</div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getAllArtists, getAllArtworks, deleteArtwork as apiDeleteArtwork } from './api.js';
+
+        let allArtists = [];
+        let allArtworks = [];
+        let allOrders = [];
+        let allNotifications = [];
+
+
+        // Check if admin is logged in
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+        const adminLoggedIn = sessionStorage.getItem('adminLoggedIn') === 'true';
+
+        if (!isAdmin) {
+            alert('Admin access required!');
+            window.location.href = 'admin-login.html';
+        }
+        if (!isAdmin && !adminLoggedIn) {
+            alert('🔐 Admin access required! Please login as admin.');
+            window.location.href = 'admin-login.html';
+        }
+        // ========== LOAD DATA FROM API ==========
+        async function loadAdminData() {
+            try {
+                // Show loading states
+                document.getElementById('artistsList').innerHTML = '<div class="loading">Loading artists...</div>';
+                document.getElementById('artworksList').innerHTML = '<div class="loading">Loading artworks...</div>';
+
+                // Fetch data from API
+                const [artists, artworks] = await Promise.all([
+                    getAllArtists(),
+                    getAllArtworks()
+                ]);
+
+                allArtists = artists;
+                allArtworks = artworks;
+
+                // Get orders and notifications from localStorage (demo)
+                allOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+                allNotifications = JSON.parse(localStorage.getItem('notifications') || '[]');
+
+                // Update stats
+                updateStats();
+
+                // Render tables
+                renderArtistsTable();
+                renderArtworksTable();
+                renderOrdersTable();
+                renderNotificationsTable();
+
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                document.getElementById('artistsList').innerHTML = `<div class="empty-state">❌ Failed to load data: ${error.message}</div>`;
+                document.getElementById('artworksList').innerHTML = `<div class="empty-state">❌ Failed to load data: ${error.message}</div>`;
+            }
+        }
+
+        function updateStats() {
+            const totalRevenue = allOrders.reduce((sum, o) => sum + (o.amount || o.totalAmount || 0), 0);
+            document.getElementById('totalArtists').textContent = allArtists.length;
+            document.getElementById('totalArtworks').textContent = allArtworks.length;
+            document.getElementById('totalOrders').textContent = allOrders.length;
+            document.getElementById('totalRevenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+        }
+
+        function renderArtistsTable() {
+            const container = document.getElementById('artistsList');
+
+            if (allArtists.length === 0) {
+                container.innerHTML = '<div class="empty-state">👥 No artists registered yet.</div>';
+                return;
+            }
+
+            const artistArtworkCount = {};
+            allArtworks.forEach(aw => {
+                artistArtworkCount[aw.artist_id] = (artistArtworkCount[aw.artist_id] || 0) + 1;
+            });
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Artist ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Category</th>
+                            <th>Artworks</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allArtists.map(artist => `
+                            <tr>
+                                <td><code>${escapeHtml(artist.artist_id)}</code></td>
+                                <td><strong>${escapeHtml(artist.name)}</strong></td>
+                                <td>${escapeHtml(artist.email)}</td>
+                                <td>${getCategoryDisplay(artist.category)}</td>
+                                <td>${artistArtworkCount[artist.artist_id] || 0}</td>
+                                <td>${new Date(artist.created_at || Date.now()).toLocaleDateString()}</td>
+                                <td><button class="btn-danger" onclick="deleteArtist('${artist.artist_id}')">Delete</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderArtworksTable() {
+            const container = document.getElementById('artworksList');
+
+            if (allArtworks.length === 0) {
+                container.innerHTML = '<div class="empty-state">🖼️ No artworks uploaded yet.</div>';
+                return;
+            }
+
+            // Create artist lookup map
+            const artistMap = {};
+            allArtists.forEach(artist => {
+                artistMap[artist.artist_id] = artist.name;
+            });
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Artwork ID</th>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allArtworks.map(aw => `
+                            <tr>
+                                <td><code>${escapeHtml(aw.artwork_id)}</code></td>
+                                <td><strong>${escapeHtml(aw.title)}</strong></td>
+                                <td>${escapeHtml(artistMap[aw.artist_id] || 'Unknown')}</td>
+                                <td>${getCategoryDisplay(aw.category)}</td>
+                                <td style="color:#27ae60; font-weight:bold;">₹${aw.price.toLocaleString()}</td>
+                                <td>${new Date(aw.created_at || Date.now()).toLocaleDateString()}</td>
+                                <td><button class="btn-danger" onclick="deleteArtwork('${aw.artwork_id}')">Delete</button></td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function renderOrdersTable() {
+            const container = document.getElementById('ordersList');
+
+            if (allOrders.length === 0) {
+                container.innerHTML = '<div class="empty-state">📋 No orders placed yet.</div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Artwork</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allOrders.map(order => `
+                            <tr>
+                                <td><code>${escapeHtml(order.id || order.order_id)}</code></td>
+                                <td>${escapeHtml(order.artworkTitle || order.artwork || 'N/A')}</td>
+                                <td style="color:#27ae60;">₹${(order.amount || order.totalAmount || 0).toLocaleString()}</td>
+                                <td><span class="status ${order.status || 'pending'}">${order.status || 'pending'}</span></td>
+                                <td>${new Date(order.date || order.created_at).toLocaleDateString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        function adminLogout() {
+            sessionStorage.removeItem('isAdmin');
+            sessionStorage.removeItem('adminLoggedIn');
+            alert('👋 Admin logged out!');
+            window.location.href = 'index.html';
+        }
+
+
+
+        function renderNotificationsTable() {
+            const container = document.getElementById('notificationsList');
+
+            if (allNotifications.length === 0) {
+                container.innerHTML = '<div class="empty-state">📧 No notifications yet.</div>';
+                return;
+            }
+
+            const html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Subject</th>
+                            <th>Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${allNotifications.slice().reverse().map(n => `
+                            <tr>
+                                <td style="white-space: nowrap;">${new Date(n.createdAt || n.date).toLocaleString()}</td>
+                                <td><span class="status ${n.type}">${n.type}</span></td>
+                                <td><strong>${escapeHtml(n.subject)}</strong></td>
+                                <td>${escapeHtml(n.message?.substring(0, 80))}${n.message?.length > 80 ? '...' : ''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            container.innerHTML = html;
+        }
+
+        // ========== DELETE FUNCTIONS ==========
+        window.deleteArtist = async function (artistId) {
+            if (confirm('⚠️ Delete this artist and ALL their artworks? This action cannot be undone.')) {
+                try {
+                    // Get artist's artworks
+                    const artistArtworks = allArtworks.filter(aw => aw.artist_id === artistId);
+
+                    // Delete each artwork via API
+                    for (const artwork of artistArtworks) {
+                        await apiDeleteArtwork(artwork.artwork_id);
+                    }
+
+                    // For demo, we also need to remove from localStorage artists array
+                    // In a real app, this would be a DELETE API call
+                    let storedArtists = JSON.parse(localStorage.getItem('artists') || '[]');
+                    storedArtists = storedArtists.filter(a => a.artistId !== artistId && a.artist_id !== artistId);
+                    localStorage.setItem('artists', JSON.stringify(storedArtists));
+
+                    // Also remove from allArtists array
+                    const artistIndex = allArtists.findIndex(a => a.artist_id === artistId);
+                    if (artistIndex !== -1) {
+                        allArtists.splice(artistIndex, 1);
+                    }
+
+                    // Remove artworks from allArtworks array
+                    allArtworks = allArtworks.filter(aw => aw.artist_id !== artistId);
+
+                    alert('✅ Artist and all artworks deleted successfully!');
+                    refreshData();
+
+                } catch (error) {
+                    console.error('Error deleting artist:', error);
+                    alert(`❌ Failed to delete artist: ${error.message}`);
+                }
+            }
+        };
+
+        window.deleteArtwork = async function (artworkId) {
+            if (confirm('⚠️ Delete this artwork? This action cannot be undone.')) {
+                try {
+                    await apiDeleteArtwork(artworkId);
+
+                    // Remove from local array
+                    allArtworks = allArtworks.filter(aw => aw.artwork_id !== artworkId);
+
+                    // Also remove from localStorage
+                    let storedArtworks = JSON.parse(localStorage.getItem('artworks') || '[]');
+                    storedArtworks = storedArtworks.filter(aw => aw.id !== artworkId && aw.artwork_id !== artworkId);
+                    localStorage.setItem('artworks', JSON.stringify(storedArtworks));
+
+                    alert('✅ Artwork deleted successfully!');
+                    refreshData();
+
+                } catch (error) {
+                    console.error('Error deleting artwork:', error);
+                    alert(`❌ Failed to delete artwork: ${error.message}`);
+                }
+            }
+        };
+
+        window.refreshData = function () {
+            loadAdminData();
+        };
+
+        // ========== HELPER FUNCTIONS ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function getCategoryDisplay(category) {
+            const map = {
+                painting: '🖼️ Painting',
+                photography: '📷 Photography',
+                music: '🎵 Music',
+                'digital-art': '💻 Digital Art',
+                sculpture: '🗿 Sculpture',
+                video: '🎥 Video Art'
+            };
+            return map[category] || category;
+        }
+
+        // ========== TAB FUNCTIONALITY ==========
+        function setupTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    const tabId = btn.dataset.tab;
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // ========== INIT ==========
+        setupTabs();
+        loadAdminData();
+    </script>
+</body>
+
+</html>

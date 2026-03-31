@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Profile | ArtHub BT24CS030</title>
+    <style>
+        /* ===== EXISTING STYLES ===== */
+        .profile-hero {
+            min-height: 80vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('https://images.unsplash.com/photo-1579526488149-35f12cc3b4b3?w=1920') center/cover fixed;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .artist-img-large {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #45b7d1);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4.5rem;
+            font-weight: bold;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            overflow: hidden;
+        }
+
+        .artist-img-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .profile-hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .portfolio-tabs {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tab {
+            padding: 12px 30px;
+            border: 2px solid #eee;
+            background: white;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .tab.active,
+        .tab:hover {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            border-color: #ff6b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .portfolio-item {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s;
+            border: 1px solid #f0f0f0;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .portfolio-img {
+            width: 100%;
+            height: 250px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portfolio-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .portfolio-img::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 107, 107, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .portfolio-item:hover .portfolio-img::after {
+            opacity: 1;
+        }
+
+        .portfolio-info {
+            padding: 1.8rem;
+        }
+
+        .portfolio-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+
+        .portfolio-meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .commission-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4rem 2rem;
+            border-radius: 30px;
+            margin: 3rem 2rem;
+            text-align: center;
+        }
+
+        .commission-form {
+            max-width: 600px;
+            margin: 2rem auto 0;
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .commission-form input,
+        .commission-form select,
+        .commission-form textarea {
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .price-slider-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        #priceSlider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.3);
+            outline: none;
+            margin-bottom: 1rem;
+        }
+
+        #priceSlider::-webkit-slider-thumb {
+            appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ff6b6b;
+            cursor: pointer;
+        }
+
+        #priceDisplay {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+
+        .about-content p {
+            margin-bottom: 1.5rem;
+            text-align: justify;
+        }
+
+        .availability-calendar {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            max-width: 500px;
+            margin: 2rem auto;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-day.available {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .calendar-day.booked {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .calendar-day.today {
+            background: #ffeb3b;
+            color: #2c3e50;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        .btn-small {
+            padding: 8px 18px;
+            font-size: 0.85rem;
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+
+        .back-home:hover {
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .profile-hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .artist-img-large {
+                width: 140px;
+                height: 140px;
+                font-size: 3.5rem;
+            }
+
+            .portfolio-tabs {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-home">🏠 Home</a>
+
+    <section class="profile-hero">
+        <div class="artist-img-large" id="artistAvatar">🎨</div>
+        <h1 id="artistName">Loading...</h1>
+        <div class="category-badge" id="artistCategory" style="font-size:1.2rem; padding:10px 25px;"></div>
+        <div class="profile-stats">
+            <div class="stat-item" id="statFollowers">👥 Loading...</div>
+            <div class="stat-item" id="statWorks">🖼️ Loading...</div>
+            <div class="stat-item" id="statRating">⭐ Loading...</div>
+            <div class="stat-item" id="statAvailability">✅ Loading...</div>
+        </div>
+    </section>
+
+    <div class="portfolio-tabs">
+        <button class="tab active" data-tab="portfolio">🖼️ Portfolio (0)</button>
+        <button class="tab" data-tab="commissions">💰 Commissions</button>
+        <button class="tab" data-tab="availability">📅 Availability</button>
+        <button class="tab" data-tab="about">📖 About</button>
+        <button class="tab" data-tab="contact">✉️ Contact</button>
+    </div>
+
+    <div id="portfolio" class="tab-content active">
+        <div class="container">
+            <h2 style="text-align:center;">Featured Works</h2>
+            <div class="portfolio-grid" id="portfolioGrid">
+                <p style="text-align:center; grid-column:1/-1;">Loading artworks...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="commissions" class="tab-content">
+        <section class="commission-section">
+            <h2 style="margin-bottom:1rem;">💸 Commission Me</h2>
+            <p style="font-size:1.2rem; margin-bottom:2rem;">Custom artwork starting from <strong>₹5,000</strong></p>
+            <form class="commission-form" id="commissionForm">
+                <input type="text" id="commissionDesc"
+                    placeholder="Project Description (What do you want me to create?)" required>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                    <select id="commissionSize" required>
+                        <option>Size: A4 (Small)</option>
+                        <option>Size: A3 (Medium)</option>
+                        <option>Size: A2 (Large)</option>
+                        <option>Custom Size</option>
+                    </select>
+                    <select id="commissionStyle" required>
+                        <option>Style: Realism</option>
+                        <option>Style: Abstract</option>
+                        <option>Style: Digital</option>
+                        <option>Style: Traditional</option>
+                    </select>
+                </div>
+                <div class="price-slider-container">
+                    <label>Budget: ₹<span id="priceDisplay">5000</span></label>
+                    <input type="range" id="priceSlider" min="1000" max="50000" value="5000">
+                </div>
+                <textarea id="commissionDetails" rows="4"
+                    placeholder="Additional details, reference images description..."></textarea>
+                <button type="submit" class="btn btn-primary" style="font-size:1.2rem; padding:18px;">Send Commission
+                    Request</button>
+            </form>
+        </section>
+    </div>
+
+    <div id="availability" class="tab-content">
+        <div class="container">
+            <h2 style="text-align:center;">📅 My Availability</h2>
+            <div class="availability-calendar">
+                <div class="calendar-header">
+                    <button id="prevMonthBtn">⬅️</button>
+                    <h3 id="monthYear">March 2026</h3>
+                    <button id="nextMonthBtn">➡️</button>
+                </div>
+                <div class="calendar-days" id="calendarDays"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="about" class="tab-content">
+        <div class="container">
+            <div class="about-content">
+                <h2 style="text-align:center;" id="aboutHeading">About</h2>
+                <p id="aboutBio">Loading artist information...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="contact" class="tab-content">
+        <div class="container">
+            <h2 style="text-align:center;">✉️ Get In Touch</h2>
+            <div
+                style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:2rem; margin-top:2rem;">
+                <div
+                    style="background:white; padding:2rem; border-radius:20px; box-shadow:0 15px 35px rgba(0,0,0,0.08);">
+                    <h3>📧 Email</h3>
+                    <p id="artistEmail">Loading...</p>
+                </div>
+                <div
+                    style="background:white; padding:2rem; border-radius:20px; box-shadow:0 15px 35px rgba(0,0,0,0.08);">
+                    <h3>📱 WhatsApp</h3>
+                    <p id="artistPhone">Loading...</p>
+                </div>
+                <div
+                    style="background:white; padding:2rem; border-radius:20px; box-shadow:0 15px 35px rgba(0,0,0,0.08);">
+                    <h3>🌐 Social</h3>
+                    <p id="artistWebsite">Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getArtistById, getArtistArtworks } from './api.js';
+
+        // ========== HELPER FUNCTIONS ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function getCategoryIcon(category) {
+            const icons = { painting: '🖼️', photography: '📷', music: '🎵', 'digital-art': '💻' };
+            return icons[category] || '🎨';
+        }
+
+        function getCategoryName(category) {
+            const map = { painting: 'Painter', photography: 'Photographer', music: 'Musician', 'digital-art': 'Digital Artist' };
+            return map[category] || category;
+        }
+
+        // ========== LOAD ARTIST DATA FROM API ==========
+        async function initArtistProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const artistId = urlParams.get('artist');
+
+            if (!artistId) {
+                document.querySelector('.profile-hero').innerHTML = '<div style="text-align:center;"><h1>❌ No artist specified</h1><a href="index.html">Back to Home</a></div>';
+                return;
+            }
+
+            try {
+                const artist = await getArtistById(artistId);
+
+                // Update artist name
+                document.getElementById('artistName').textContent = artist.name;
+                document.title = `${artist.name} - Artist Profile | ArtHub`;
+
+                // Update avatar
+                const avatarDiv = document.querySelector('.artist-img-large');
+                if (artist.image_data) {
+                    avatarDiv.innerHTML = `<img src="${artist.image_data}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    avatarDiv.textContent = artist.name.charAt(0).toUpperCase();
+                }
+
+                // Update category badge
+                document.getElementById('artistCategory').textContent = `${getCategoryIcon(artist.category)} ${getCategoryName(artist.category)}`;
+
+                // Get artworks for stats
+                const artistArtworks = await getArtistArtworks(artist.artist_id);
+                const artworkCount = artistArtworks.length;
+
+                // Calculate stats
+                const rating = artworkCount > 0 ? (Math.min(5, 4 + (artworkCount / 20))).toFixed(1) : '0';
+                const followers = Math.floor(Math.random() * 5000) + 500 + (artworkCount * 50);
+
+                // Update stats
+                document.getElementById('statFollowers').innerHTML = `👥 ${followers.toLocaleString()} Followers`;
+                document.getElementById('statWorks').innerHTML = `🖼️ ${artworkCount} Works`;
+                document.getElementById('statRating').innerHTML = `⭐ ${rating} Rating`;
+
+                // Update availability
+                const isAvailable = artist.availability?.toLowerCase().includes('open') ||
+                    artist.availability?.toLowerCase().includes('available');
+                const availSpan = document.getElementById('statAvailability');
+                availSpan.style.background = isAvailable ? 'rgba(39, 174, 96, 0.3)' : 'rgba(231, 76, 60, 0.3)';
+                availSpan.innerHTML = isAvailable ? `✅ ${artist.availability || 'Available'}` : `⏸️ ${artist.availability || 'Not Available'}`;
+
+                // Update about section
+                document.getElementById('aboutHeading').textContent = `About ${artist.name}`;
+                document.getElementById('aboutBio').textContent = artist.bio || `${artist.name} is a talented ${getCategoryName(artist.category)} based in India. Open for commissions and collaborations.`;
+
+                // Update contact section
+                document.getElementById('artistEmail').textContent = artist.email || 'Not provided';
+                document.getElementById('artistPhone').textContent = artist.phone || 'Not provided';
+                document.getElementById('artistWebsite').innerHTML = artist.website ? `<a href="${artist.website}" target="_blank">${artist.website}</a>` : 'Not provided';
+
+                // Store current artist for commission form
+                window.currentArtist = artist;
+
+                // Load portfolio
+                loadPortfolio(artistArtworks);
+
+                // Update portfolio tab count
+                const portfolioTab = document.querySelector('.tab[data-tab="portfolio"]');
+                if (portfolioTab) {
+                    portfolioTab.innerHTML = `🖼️ Portfolio (${artworkCount})`;
+                }
+
+            } catch (error) {
+                console.error('Error loading artist:', error);
+                document.querySelector('.profile-hero').innerHTML = `
+                    <div style="text-align:center; padding:3rem;">
+                        <h1>❌ Artist Not Found</h1>
+                        <p>${error.message}</p>
+                        <a href="index.html" class="btn btn-primary" style="margin-top:1rem;">← Back to Home</a>
+                    </div>
+                `;
+            }
+        }
+
+        // ========== LOAD PORTFOLIO ==========
+        function loadPortfolio(artistArtworks) {
+            const grid = document.getElementById('portfolioGrid');
+
+            if (artistArtworks.length === 0) {
+                grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:3rem;"><p>🎨 No artworks uploaded yet.</p><p style="color:#7f8c8d;">Check back soon for new creations!</p></div>';
+                return;
+            }
+
+            grid.innerHTML = artistArtworks.map(aw => {
+                let artworkHtml = '';
+                if (aw.image_url) {
+                    artworkHtml = `<img src="${aw.image_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else if (aw.image_data) {
+                    artworkHtml = `<img src="${aw.image_data}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    artworkHtml = `<div style="font-size:4rem;">🎨</div>`;
+                }
+
+                return `
+                    <div class="portfolio-item">
+                        <div class="portfolio-img">${artworkHtml}</div>
+                        <div class="portfolio-info">
+                            <h3 class="portfolio-title">${escapeHtml(aw.title)}</h3>
+                            <div class="portfolio-meta">
+                                <span>${getCategoryIcon(aw.category)} ${aw.category || 'Artwork'}</span>
+                                <span>${new Date(aw.created_at || Date.now()).getFullYear()}</span>
+                            </div>
+                           <div style="margin-top:1rem;">
+                                 <button class="btn btn-primary btn-small" onclick="window.location.href='artwork-detail.html?id=${aw.artwork_id}'">View Details</button>
+                                 <button class="btn btn-secondary btn-small" style="margin-left:10px;">₹${aw.price}</button>
+                           </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ========== TAB FUNCTIONALITY ==========
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const target = tab.dataset.tab;
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(target).classList.add('active');
+                });
+            });
+        }
+
+        // ========== PRICE SLIDER ==========
+        function setupPriceSlider() {
+            const priceSlider = document.getElementById('priceSlider');
+            const priceDisplay = document.getElementById('priceDisplay');
+            if (priceSlider && priceDisplay) {
+                priceSlider.addEventListener('input', (e) => {
+                    priceDisplay.textContent = e.target.value;
+                });
+            }
+        }
+
+        // ========== COMMISSION FORM ==========
+        function setupCommissionForm() {
+            const form = document.getElementById('commissionForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const artistName = window.currentArtist?.name || 'the artist';
+                    const budget = document.getElementById('priceSlider')?.value || 5000;
+                    const description = document.getElementById('commissionDesc')?.value || 'No description';
+
+                    alert(`✅ Commission request sent to ${artistName}!\n\nBudget: ₹${budget}\nProject: ${description}\n\nThey will contact you within 24 hours.`);
+                    form.reset();
+                    const priceSlider = document.getElementById('priceSlider');
+                    const priceDisplay = document.getElementById('priceDisplay');
+                    if (priceSlider) priceSlider.value = 5000;
+                    if (priceDisplay) priceDisplay.textContent = '5000';
+                });
+            }
+        }
+
+        // ========== CALENDAR ==========
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+
+        function renderCalendar() {
+            const calendarDiv = document.getElementById('calendarDays');
+            if (!calendarDiv) return;
+
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('monthYear').textContent = `${monthNames[currentMonth]} ${currentYear}`;
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            let calendarHTML = '';
+            for (let i = 0; i < firstDay; i++) {
+                calendarHTML += `<div class="calendar-day" style="opacity:0.3;"></div>`;
+            }
+
+            const today = new Date();
+            const todayDate = today.getDate();
+            const todayMonth = today.getMonth();
+            const todayYear = today.getFullYear();
+
+            for (let i = 1; i <= daysInMonth; i++) {
+                const isToday = (i === todayDate && currentMonth === todayMonth && currentYear === todayYear);
+                const isAvailable = (i % 5 !== 0 && i % 7 !== 0);
+                calendarHTML += `
+                    <div class="calendar-day ${isAvailable ? 'available' : 'booked'} ${isToday ? 'today' : ''}"
+                         onclick="alert('${isAvailable ? 'Available! Send commission request.' : 'Booked on this day.'}')">
+                        ${i}
+                    </div>
+                `;
+            }
+            calendarDiv.innerHTML = calendarHTML;
+        }
+
+        function setupCalendar() {
+            const prevBtn = document.getElementById('prevMonthBtn');
+            const nextBtn = document.getElementById('nextMonthBtn');
+
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    currentMonth--;
+                    if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+                    renderCalendar();
+                });
+            }
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    currentMonth++;
+                    if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+                    renderCalendar();
+                });
+            }
+            renderCalendar();
+        }
+
+        // ========== INIT ==========
+        async function init() {
+            await initArtistProfile();
+            setupTabs();
+            setupPriceSlider();
+            setupCommissionForm();
+            setupCalendar();
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

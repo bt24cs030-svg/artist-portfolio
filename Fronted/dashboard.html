@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artist Dashboard | ArtHub</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* ========== ALL YOUR EXISTING STYLES REMAIN SAME ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #2c3e50 0%, #1a252f 100%);
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .logo {
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid #34495e;
+            text-align: center;
+        }
+
+        .logo h2 {
+            color: white;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .logo p {
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu {
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            display: block;
+            padding: 1rem 1.5rem;
+            color: #bdc3c7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 107, 107, 0.1);
+            color: white;
+            border-left-color: #ff6b6b;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            overflow: hidden;
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-income {
+            color: #27ae60;
+        }
+
+        .stat-artworks {
+            color: #3498db;
+        }
+
+        .stat-orders {
+            color: #f39c12;
+        }
+
+        .stat-followers {
+            color: #9b59b6;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            padding: 2rem;
+            background: white;
+            margin: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Upload Area */
+        .upload-zone {
+            border: 3px dashed #ddd;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .upload-zone:hover {
+            border-color: #ff6b6b;
+            background: #fff5f5;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Artworks Grid */
+        .artworks-grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .artwork-card-dashboard {
+            background: #f8f9fa;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .artwork-card-dashboard:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .artwork-img-dashboard {
+            width: 100%;
+            height: 180px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .artwork-img-dashboard img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .artwork-info-dashboard {
+            padding: 1rem;
+        }
+
+        /* Orders Table */
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .orders-table th,
+        .orders-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .orders-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+        }
+
+        .status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status.completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        /* Analytics Chart */
+        .chart-placeholder {
+            height: 250px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff6b6b;
+            border: 2px solid #ff6b6b;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.8rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .content-section {
+                margin: 1rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <h2>🎨 ArtHub</h2>
+            <p>Artist Dashboard</p>
+        </div>
+        <nav class="nav-menu">
+            <div class="nav-item active" data-section="overview">📊 Overview</div>
+            <div class="nav-item" data-section="upload">⬆️ Upload Art</div>
+            <div class="nav-item" data-section="myartworks">🖼️ My Artworks</div>
+            <div class="nav-item" data-section="profile">👤 Profile</div>
+            <div class="nav-item" data-section="orders">📋 Orders</div>
+            <div class="nav-item" data-section="analytics">📈 Analytics</div>
+            <div class="nav-item" data-section="commissions">💰 Commissions</div>
+            <a href="index.html" class="nav-item" style="display:block;">🏠 Visit Site</a>
+            <div class="nav-item" id="logoutBtn">🚪 Logout</div>
+        </nav>
+    </div>
+
+
+    <div class="main-content">
+        <header class="header">
+            <button class="mobile-menu-toggle" onclick="toggleSidebar()">☰</button>
+            <h1 id="pageTitle">Dashboard Overview</h1>
+            <div class="user-profile">
+                <div class="avatar" id="userAvatar"></div>
+                <div>
+                    <div id="userName" style="font-weight: 600;">Loading...</div>
+                    <div id="userArtistId" style="font-size: 0.9rem; color: #7f8c8d;"></div>
+                </div>
+            </div>
+        </header>
+
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number stat-income" id="totalIncome">₹0</div>
+                <div class="stat-label">Total Income</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-artworks" id="totalArtworks">0</div>
+                <div class="stat-label">Total Artworks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-orders" id="pendingOrders">0</div>
+                <div class="stat-label">Pending Orders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number stat-followers" id="followers">0</div>
+                <div class="stat-label">Followers</div>
+            </div>
+        </div>
+
+
+        <div id="overview" class="content-section active">
+            <h2>🚀 Welcome Back, <span id="welcomeName">Artist</span>!</h2>
+            <p style="color: #7f8c8d; margin-bottom: 2rem;">Here's what's happening with your art business today.</p>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div>
+                    <h3>Recent Activity</h3>
+                    <div id="recentActivity">
+                        <p style="padding: 0.5rem;">Loading...</p>
+                    </div>
+                </div>
+                <div>
+                    <h3>Quick Actions</h3>
+                    <div style="display: grid; gap: 1rem;">
+                        <button class="btn btn-primary" onclick="switchSection('upload')">⬆️ Upload New Artwork</button>
+                        <button class="btn btn-secondary"
+                            onclick="window.open('artist-profile.html?artist=' + getArtistId(), '_blank')">👤 View
+                            Public Profile</button>
+                        <button class="btn btn-secondary" onclick="switchSection('analytics')">📈 View
+                            Analytics</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="upload" class="content-section">
+            <h2>⬆️ Upload New Artwork</h2>
+            <div class="upload-zone" onclick="document.getElementById('artworkFile').click()">
+                <div class="upload-icon">🖼️</div>
+                <h3>Drop your artwork here or click to browse</h3>
+                <p id="uploadHint" style="color: #7f8c8d;">Supports JPG, PNG, MP3, MP4 (Max 10MB)</p>
+               <input type="file" id="artworkFile" accept="image/*,audio/*,video/*" style="display: none;">
+            </div>
+            <div id="imagePreview" style="margin-top: 1rem; display: none; text-align: center;">
+                <img id="previewImg" style="max-width: 200px; border-radius: 10px;">
+            </div>
+            <div style="margin-top: 2rem; padding: 1.5rem; background: #f8f9fa; border-radius: 15px;">
+                <h4>Artwork Details</h4>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 1rem;">
+                    <input type="text" id="artworkTitle" placeholder="Title"
+                        style="padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    <input type="number" id="artworkPrice" placeholder="Price (₹)"
+                        style="padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                    <select id="artworkCategory" style="padding: 12px; border: 1px solid #ddd; border-radius: 10px;">
+                        <option value="painting">🎨 Painting</option>
+                        <option value="photography">📷 Photography</option>
+                        <option value="digital-art">💻 Digital Art</option>
+                        <option value="music">🎵 Music</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" style="margin-top: 1.5rem;" onclick="uploadArtwork()">Publish
+                    Artwork</button>
+            </div>
+        </div>
+
+
+        <div id="myartworks" class="content-section">
+            <h2>🖼️ My Artworks</h2>
+            <div id="myArtworksList" class="artworks-grid-dashboard">
+                <p>Loading...</p>
+            </div>
+        </div>
+
+
+        <div id="profile" class="content-section">
+            <h2 style="margin-bottom: 1.5rem;">👤 My Profile</h2>
+
+
+            <div
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 2rem; margin-bottom: 2rem; color: white;">
+                <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+                    <div style="position: relative;">
+                        <div
+                            style="width: 100px; height: 100px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                            <div id="profileAvatar" style="width: 100%; height: 100%;"></div>
+                        </div>
+                        <div
+                            style="position: absolute; bottom: 0; right: 0; background: #ff6b6b; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 14px; border: 2px solid white;">
+                            🎨
+                        </div>
+                    </div>
+                    <div>
+                        <h1 id="profileName" style="font-size: 2rem; margin-bottom: 0.5rem;">Loading...</h1>
+                        <p style="opacity: 0.9;">✨ <span id="profileCategory"></span> • Artist ID: <span
+                                id="profileArtistId"></span></p>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                            <span>⭐ <span id="profileRating">4.9</span> Rating</span>
+                            <span>🎨 <span id="profileWorksCount">0</span> Works</span>
+                            <span>👥 <span id="profileFollowers">0</span> Followers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                <div
+                    style="background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem;">
+                        <div
+                            style="width: 45px; height: 45px; background: linear-gradient(135deg, #ff6b6b, #ff8e8e); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                            📧</div>
+                        <h3>Contact Information</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                        <p><strong>Phone:</strong> <span id="profilePhone"></span></p>
+                        <p><strong>Website:</strong> <span id="profileWebsite"></span></p>
+                    </div>
+                </div>
+
+                <div
+                    style="background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem;">
+                        <div
+                            style="width: 45px; height: 45px; background: linear-gradient(135deg, #4ecdc4, #45b7d1); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                            🎨</div>
+                        <h3>Artist Details</h3>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                        <p><strong>Category:</strong> <span id="profileCategoryDetail"></span></p>
+                        <p><strong>Availability:</strong> <span id="profileAvailability"
+                                style="display: inline-block; padding: 4px 12px; border-radius: 20px;"></span></p>
+                        <p><strong>Artist ID:</strong> <span id="profileArtistIdDetail"></span></p>
+                        <p><strong>Joined:</strong> <span id="profileJoined"></span></p>
+                    </div>
+                </div>
+
+                <div
+                    style="background: white; border-radius: 20px; padding: 1.5rem; box-shadow: 0 5px 20px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1.5rem;">
+                        <div
+                            style="width: 45px; height: 45px; background: linear-gradient(135deg, #f39c12, #e67e22); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem;">
+                            📝</div>
+                        <h3>About Me</h3>
+                    </div>
+                    <p id="profileBio" style="color: #7f8c8d; line-height: 1.6;">Loading...</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; text-align: center;">
+                <button onclick="editProfile()"
+                    style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; margin: 0 0.5rem;">
+                    ✏️ Edit Profile
+                </button>
+                <button onclick="window.open('artist-profile.html?artist=' + getArtistId(), '_blank')"
+                    style="background: transparent; color: #ff6b6b; border: 2px solid #ff6b6b; padding: 12px 30px; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; margin: 0 0.5rem; transition: all 0.3s;">
+                    👤 View Public Profile
+                </button>
+            </div>
+        </div>
+
+
+        <div id="orders" class="content-section">
+            <h2>📋 Recent Orders</h2>
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Artwork</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersList">
+                    <tr>
+                        <td colspan="5" style="text-align:center;">No orders yet.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+
+        <div id="analytics" class="content-section">
+            <h2>📈 Analytics</h2>
+            <div class="chart-container"
+                style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                <div
+                    style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 1rem; text-align: center;">📊 Monthly Income</h3>
+                    <canvas id="incomeChart" style="width: 100%; height: 250px;"></canvas>
+                </div>
+                <div
+                    style="background: white; padding: 1.5rem; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05);">
+                    <h3 style="margin-bottom: 1rem; text-align: center;">👁️ Profile Views</h3>
+                    <canvas id="viewsChart" style="width: 100%; height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div id="commissions" class="content-section">
+            <h2>💰 Commission Requests</h2>
+            <div id="commissionsList">
+                <p style="text-align:center; padding:2rem;">No commission requests yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { getDashboardStats, getArtistArtworks, deleteArtwork, updateArtist, uploadArtwork } from './api.js';
+
+        // ========== CHECK LOGIN ==========
+        const loggedInArtist = JSON.parse(sessionStorage.getItem('loggedInArtist') || 'null');
+        const token = sessionStorage.getItem('token');
+
+        // ✅ FIX: Check both artist and token
+        if (!loggedInArtist || !token) {
+            alert('🔐 Please login first to access your dashboard!');
+            window.location.href = 'login.html';
+        }
+
+        let currentArtworkImage = null;
+        let allMyArtworks = [];
+
+        // ========== HELPER FUNCTIONS ==========
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function getArtistId() {
+            return loggedInArtist.artistId;
+        }
+
+        function getCategoryName(category) {
+            const map = { painting: 'Painter', photography: 'Photographer', music: 'Musician', 'digital-art': 'Digital Artist' };
+            return map[category] || category;
+        }
+
+        // ========== LOAD DASHBOARD DATA FROM API ==========
+        async function loadDashboard() {
+            // Update user info
+            document.getElementById('userName').textContent = loggedInArtist.name;
+            document.getElementById('userArtistId').textContent = `Artist ID: ${loggedInArtist.artistId}`;
+            document.getElementById('welcomeName').textContent = loggedInArtist.name;
+
+            // Update avatar
+            const avatarDiv = document.getElementById('userAvatar');
+            if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('data:image')) {
+                avatarDiv.innerHTML = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('http')) {
+                avatarDiv.innerHTML = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; object-fit:cover;">`;
+            } else {
+                avatarDiv.textContent = loggedInArtist.avatar || loggedInArtist.name.charAt(0).toUpperCase();
+            }
+
+            try {
+                console.log('Fetching stats for artist:', loggedInArtist.artistId);
+
+                // Get stats from API
+                const stats = await getDashboardStats(loggedInArtist.artistId);
+                console.log('Stats received:', stats);
+
+                document.getElementById('totalIncome').textContent = `₹${stats.totalIncome.toLocaleString()}`;
+                document.getElementById('totalArtworks').textContent = stats.totalArtworks;
+                document.getElementById('pendingOrders').textContent = stats.pendingOrders;
+                document.getElementById('followers').textContent = Math.floor(Math.random() * 2000) + 100;
+
+                // Get artworks from API
+                allMyArtworks = await getArtistArtworks(loggedInArtist.artistId);
+                console.log('Artworks received:', allMyArtworks);
+
+                // Recent Activity
+                const activityDiv = document.getElementById('recentActivity');
+                if (allMyArtworks.length > 0) {
+                    const lastArtwork = allMyArtworks[allMyArtworks.length - 1];
+                    activityDiv.innerHTML = `
+                        <p style="padding: 0.5rem;">✅ New artwork added: "${escapeHtml(lastArtwork.title)}"</p>
+                        <p style="padding: 0.5rem;">👀 Profile viewed by ${Math.floor(Math.random() * 50) + 10} collectors</p>
+                        <p style="padding: 0.5rem;">💰 Total earnings: ₹${stats.totalIncome}</p>
+                    `;
+                } else {
+                    activityDiv.innerHTML = `<p>No recent activity. Upload your first artwork!</p>`;
+                }
+
+                // Load my artworks
+                loadMyArtworks();
+
+                // Load profile info
+                loadProfileInfo();
+
+                // Load orders
+                loadOrders();
+
+                // Load analytics
+                loadAnalytics();
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                document.getElementById('recentActivity').innerHTML = `<p>❌ Failed to load data: ${error.message}</p>`;
+            }
+        }
+
+        function loadMyArtworks() {
+            const container = document.getElementById('myArtworksList');
+
+            if (allMyArtworks.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:2rem;">No artworks yet. Upload your first artwork!</p>';
+                return;
+            }
+
+            container.innerHTML = allMyArtworks.map(aw => {
+                let imageHtml = '';
+                if (aw.image_url) {
+                    imageHtml = `<img src="${aw.image_url}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else if (aw.image_data) {
+                    imageHtml = `<img src="${aw.image_data}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    imageHtml = `<div style="font-size:3rem;">🎨</div>`;
+                }
+
+                return `
+                    <div class="artwork-card-dashboard">
+                        <div class="artwork-img-dashboard">${imageHtml}</div>
+                        <div class="artwork-info-dashboard">
+                            <h4>${escapeHtml(aw.title)}</h4>
+                            <p style="color:#27ae60; font-weight:bold;">₹${aw.price}</p>
+                            <button class="btn-danger" onclick="deleteArtwork('${aw.artwork_id}')">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function loadProfileInfo() {
+            const artworkCount = allMyArtworks.length;
+            // const rating = (Math.floor(Math.random() * 50) + 45) / 10;
+            // const followers = Math.floor(Math.random() * 5000) + 500 + (artworkCount * 50);
+
+            let rating = 0;
+            if (artworkCount === 0) {
+                rating = 0;
+            } else if (artworkCount <= 2) {
+                rating = 4.0;
+            } else if (artworkCount <= 5) {
+                rating = 4.5;
+            } else {
+                rating = 4.8;
+            }
+            // Add small random variation (±0.2)
+            rating = Math.min(5.0, rating + (Math.random() * 0.4 - 0.2));
+            rating = parseFloat(rating.toFixed(1));
+
+            const followers = Math.floor(Math.random() * 2000) + 500 + (artworkCount * 50);
+
+            // Update Profile Header
+            const profileAvatar = document.getElementById('profileAvatar');
+            if (profileAvatar) {
+                if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('data:image')) {
+                    profileAvatar.innerHTML = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('http')) {
+                    profileAvatar.innerHTML = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; object-fit:cover;">`;
+                } else {
+                    profileAvatar.innerHTML = `<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; font-size:2.5rem; background:linear-gradient(135deg,#ff6b6b,#4ecdc4); color:white;">${loggedInArtist.avatar || loggedInArtist.name.charAt(0).toUpperCase()}</div>`;
+                }
+            }
+
+            document.getElementById('profileName').textContent = loggedInArtist.name;
+            document.getElementById('profileCategory').textContent = getCategoryName(loggedInArtist.category);
+            document.getElementById('profileArtistId').textContent = loggedInArtist.artistId;
+            document.getElementById('profileRating').textContent = rating.toFixed(1);
+            document.getElementById('profileWorksCount').textContent = artworkCount;
+            document.getElementById('profileFollowers').textContent = followers.toLocaleString();
+
+            // Contact Info
+            document.getElementById('profileEmail').textContent = loggedInArtist.email || 'Not provided';
+            document.getElementById('profilePhone').textContent = loggedInArtist.phone || 'Not provided';
+            document.getElementById('profileWebsite').innerHTML = loggedInArtist.website ? `<a href="${loggedInArtist.website}" target="_blank" style="color:#ff6b6b; text-decoration:none;">${loggedInArtist.website}</a>` : 'Not provided';
+
+            // Artist Details
+            document.getElementById('profileCategoryDetail').textContent = getCategoryName(loggedInArtist.category);
+
+            const availabilitySpan = document.getElementById('profileAvailability');
+            const isAvailable = loggedInArtist.availability?.toLowerCase().includes('open') ||
+                loggedInArtist.availability?.toLowerCase().includes('available');
+            availabilitySpan.textContent = loggedInArtist.availability || 'Available';
+            availabilitySpan.style.background = isAvailable ? '#d4edda' : '#f8d7da';
+            availabilitySpan.style.color = isAvailable ? '#155724' : '#721c24';
+
+            document.getElementById('profileArtistIdDetail').textContent = loggedInArtist.artistId;
+            document.getElementById('profileJoined').textContent = new Date(loggedInArtist.registeredAt || Date.now()).toLocaleDateString();
+
+            // Bio
+            document.getElementById('profileBio').textContent = loggedInArtist.bio || 'No bio provided yet. Click "Edit Profile" to add your story!';
+        }
+
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const myOrders = orders.filter(o => o.artistId === loggedInArtist.artistId);
+            const tbody = document.getElementById('ordersList');
+
+            if (myOrders.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders yet.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = myOrders.map(order => `
+                <tr>
+                    <td>${order.id}</td>
+                    <td>${escapeHtml(order.artworkTitle || order.artwork)}</td>
+                    <td>₹${order.amount}</td>
+                    <td><span class="status ${order.status}">${order.status}</span></td>
+                    <td>${new Date(order.date).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        // function loadAnalytics() {
+        //     const totalIncome = allMyArtworks.reduce((sum, aw) => sum + (aw.price || 0), 0);
+        //     document.getElementById('incomeChart').innerHTML = `📊 Total Income: ₹${totalIncome.toLocaleString()}<br>From ${allMyArtworks.length} artworks`;
+        //     document.getElementById('viewsChart').innerHTML = `📈 Profile Views: ${Math.floor(Math.random() * 5000) + 500}<br>This month`;
+        // }
+
+        // function loadAnalytics() {
+        //     // Wait for DOM to be ready
+        //     setTimeout(() => {
+        //         const incomeCanvas = document.getElementById('incomeChart');
+        //         const viewsCanvas = document.getElementById('viewsChart');
+
+        //         if (!incomeCanvas || !viewsCanvas) {
+        //             console.log('Canvas elements not found yet');
+        //             return;
+        //         }
+
+        //         const ctx1 = incomeCanvas.getContext('2d');
+        //         const ctx2 = viewsCanvas.getContext('2d');
+
+        //         if (!ctx1 || !ctx2) {
+        //             console.log('Could not get canvas context');
+        //             return;
+        //         }
+
+        //         const monthlyIncome = [500, 1200, 1800, 900, 2000, 2500];
+        //         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+        //         // Destroy existing charts if any
+        //         if (window.incomeChart) window.incomeChart.destroy();
+        //         if (window.viewsChart) window.viewsChart.destroy();
+
+        //         window.incomeChart = new Chart(ctx1, {
+        //             type: 'line',
+        //             data: {
+        //                 labels: months,
+        //                 datasets: [{
+        //                     label: 'Monthly Income (₹)',
+        //                     data: monthlyIncome,
+        //                     borderColor: '#ff6b6b',
+        //                     backgroundColor: 'rgba(255, 107, 107, 0.1)',
+        //                     tension: 0.4,
+        //                     fill: true
+        //                 }]
+        //             },
+        //             options: {
+        //                 responsive: true,
+        //                 maintainAspectRatio: true,
+        //                 plugins: {
+        //                     legend: { position: 'top' }
+        //                 }
+        //             }
+        //         });
+
+        //         const views = [200, 400, 800, 1200, 1600, 2200];
+
+        //         window.viewsChart = new Chart(ctx2, {
+        //             type: 'bar',
+        //             data: {
+        //                 labels: months,
+        //                 datasets: [{
+        //                     label: 'Profile Views',
+        //                     data: views,
+        //                     backgroundColor: '#4ecdc4',
+        //                     borderRadius: 8
+        //                 }]
+        //             },
+        //             options: {
+        //                 responsive: true,
+        //                 maintainAspectRatio: true,
+        //                 plugins: {
+        //                     legend: { position: 'top' }
+        //                 }
+        //             }
+        //         });
+
+        //         console.log('Charts loaded successfully');
+        //     }, 100);
+        // }
+
+        function loadAnalytics() {
+            console.log('Loading analytics...');
+
+            // Check if Chart is available
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded! Showing fallback data.');
+                const analyticsContainer = document.querySelector('#analytics .chart-container');
+                if (analyticsContainer) {
+                    analyticsContainer.innerHTML = `
+                <div style="grid-column:1/-1; text-align:center; padding:2rem;">
+                    <h3>📊 Analytics Data</h3>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:1rem;">
+                        <div style="background:#f8f9fa; padding:1rem; border-radius:12px;">
+                            <h4>Monthly Income</h4>
+                            <p>Jan: ₹1,200</p>
+                            <p>Feb: ₹1,900</p>
+                            <p>Mar: ₹3,000</p>
+                            <p>Apr: ₹2,500</p>
+                            <p>May: ₹4,200</p>
+                            <p>Jun: ₹3,800</p>
+                        </div>
+                        <div style="background:#f8f9fa; padding:1rem; border-radius:12px;">
+                            <h4>Profile Views</h4>
+                            <p>Jan: 450</p>
+                            <p>Feb: 620</p>
+                            <p>Mar: 890</p>
+                            <p>Apr: 1,200</p>
+                            <p>May: 1,800</p>
+                            <p>Jun: 2,100</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+                }
+                return;
+            }
+
+            // Get canvas elements
+            const incomeCanvas = document.getElementById('incomeChart');
+            const viewsCanvas = document.getElementById('viewsChart');
+
+            if (!incomeCanvas || !viewsCanvas) {
+                console.error('Canvas elements not found');
+                return;
+            }
+
+            // Destroy existing charts safely
+            try {
+                if (window.incomeChartInstance && typeof window.incomeChartInstance.destroy === 'function') {
+                    window.incomeChartInstance.destroy();
+                }
+                if (window.viewsChartInstance && typeof window.viewsChartInstance.destroy === 'function') {
+                    window.viewsChartInstance.destroy();
+                }
+            } catch (e) {
+                console.log('No existing charts to destroy');
+            }
+
+            // Sample data
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            const monthlyIncome = [1200, 1900, 3000, 2500, 4200, 3800];
+            const profileViews = [450, 620, 890, 1200, 1800, 2100];
+
+            // Income Chart (Line)
+            try {
+                const incomeCtx = incomeCanvas.getContext('2d');
+                window.incomeChartInstance = new Chart(incomeCtx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Income (₹)',
+                            data: monthlyIncome,
+                            borderColor: '#ff6b6b',
+                            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#ff6b6b',
+                            pointBorderColor: '#fff',
+                            pointRadius: 5,
+                            pointHoverRadius: 7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `₹${context.raw.toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return '₹' + value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('Income chart created');
+            } catch (e) {
+                console.error('Error creating income chart:', e);
+            }
+
+            // Views Chart (Bar)
+            try {
+                const viewsCtx = viewsCanvas.getContext('2d');
+                window.viewsChartInstance = new Chart(viewsCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Profile Views',
+                            data: profileViews,
+                            backgroundColor: '#4ecdc4',
+                            borderRadius: 8,
+                            barPercentage: 0.7
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { position: 'top' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return `${context.raw.toLocaleString()} views`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return value.toLocaleString();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('Views chart created');
+            } catch (e) {
+                console.error('Error creating views chart:', e);
+            }
+        }
+
+        // Handle category change for different media types
+function handleCategoryChange() {
+    const category = document.getElementById('artworkCategory').value;
+    const uploadHint = document.getElementById('uploadHint');
+    const uploadIcon = document.querySelector('.upload-icon');
+    const uploadZone = document.querySelector('.upload-zone');
+    const fileInput = document.getElementById('artworkFile');
+    
+    if (category === 'music') {
+        uploadIcon.innerHTML = '🎵';
+        uploadHint.innerHTML = 'Supports MP3, WAV, FLAC (Max 10MB)';
+        fileInput.accept = 'audio/*';
+        uploadZone.style.background = 'linear-gradient(135deg, #667eea20, #764ba220)';
+    } else if (category === 'video') {
+        uploadIcon.innerHTML = '🎥';
+        uploadHint.innerHTML = 'Supports MP4, MOV, WEBM (Max 50MB)';
+        fileInput.accept = 'video/*';
+        uploadZone.style.background = 'linear-gradient(135deg, #f39c1220, #e67e2220)';
+    } else {
+        uploadIcon.innerHTML = '🖼️';
+        uploadHint.innerHTML = 'Supports JPG, PNG (Max 5MB)';
+        fileInput.accept = 'image/*';
+        uploadZone.style.background = '#f8f9fa';
+    }
+}
+
+        // ========== UPLOAD ARTWORK TO API ==========
+        window.uploadArtwork = async function () {
+            const title = document.getElementById('artworkTitle').value;
+            const price = document.getElementById('artworkPrice').value;
+            const category = document.getElementById('artworkCategory').value;
+
+            if (!title) { alert('Please enter artwork title'); return; }
+            if (!price) { alert('Please enter price'); return; }
+            if (!currentArtworkImage) { alert('Please upload an image'); return; }
+
+            const artworkData = {
+                artworkId: 'aw_' + Date.now(),
+                artistId: loggedInArtist.artistId,
+                title: title,
+                category: category,
+                price: parseInt(price),
+                imageData: currentArtworkImage
+            };
+
+            try {
+                await uploadArtwork(artworkData);
+                alert(`✅ "${title}" uploaded successfully!`);
+
+                document.getElementById('artworkTitle').value = '';
+                document.getElementById('artworkPrice').value = '';
+                document.getElementById('imagePreview').style.display = 'none';
+                currentArtworkImage = null;
+
+                await loadDashboard();
+                switchSection('myartworks');
+            } catch (error) {
+                alert(`❌ Upload failed: ${error.message}`);
+            }
+        };
+
+        window.deleteArtwork = async function (artworkId) {
+            if (confirm('Are you sure you want to delete this artwork?')) {
+                try {
+                    await deleteArtwork(artworkId);
+                    alert('✅ Artwork deleted!');
+                    await loadDashboard();
+                } catch (error) {
+                    alert(`❌ Delete failed: ${error.message}`);
+                }
+            }
+        };
+
+        // ========== EDIT PROFILE MODAL ==========
+        window.editProfile = function () {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7); display: flex; align-items: center;
+        justify-content: center; z-index: 10000; backdrop-filter: blur(4px);
+        animation: fadeIn 0.3s ease;
+    `;
+
+            let currentAvatarHtml = '';
+            if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('data:image')) {
+                currentAvatarHtml = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            } else if (loggedInArtist.imageData && loggedInArtist.imageData.startsWith('http')) {
+                currentAvatarHtml = `<img src="${loggedInArtist.imageData}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+            } else {
+                currentAvatarHtml = `<div style="font-size:2.5rem; font-weight:bold; color:white;">${loggedInArtist.avatar || loggedInArtist.name.charAt(0).toUpperCase()}</div>`;
+            }
+
+            modal.innerHTML = `
+        <div style="background: white; border-radius: 24px; max-width: 550px; width: 90%; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease;">
+           
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); padding: 1.5rem; border-radius: 24px 24px 0 0; color: white;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h2 style="margin: 0; font-size: 1.5rem;">✏️ Edit Profile</h2>
+                    <button onclick="closeEditModal()" style="background: rgba(255,255,255,0.2); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;">✕</button>
+                </div>
+                <p style="margin: 0.5rem 0 0; opacity: 0.8;">Update your profile information</p>
+            </div>
+            
+           
+            <div style="padding: 1.5rem;">
+               
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="position: relative; display: inline-block;">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+                            <div id="profilePhotoPreview" style="width:100%; height:100%;">${currentAvatarHtml}</div>
+                        </div>
+                        <button type="button" onclick="changeProfilePhoto()" style="position: absolute; bottom: 0; right: 0; background: #ff6b6b; color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 1rem; box-shadow: 0 2px 8px rgba(0,0,0,0.2);">
+                            📸
+                        </button>
+                    </div>
+                    <p style="font-size: 0.75rem; color: #7f8c8d; margin-top: 0.5rem;">Click camera to change photo</p>
+                    <input type="file" id="profilePhotoInput" accept="image/*" style="display: none;">
+                </div>
+                
+               
+                <div style="display: grid; gap: 1rem;">
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2c3e50;">Full Name</label>
+                        <input type="text" id="editName" value="${escapeHtml(loggedInArtist.name)}" 
+                               style="width:100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem; transition: all 0.3s;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2c3e50;">Bio / About</label>
+                        <textarea id="editBio" rows="4" 
+                                  style="width:100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem; resize: vertical; font-family: inherit;">${escapeHtml(loggedInArtist.bio || '')}</textarea>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2c3e50;">Availability</label>
+                        <input type="text" id="editAvailability" value="${escapeHtml(loggedInArtist.availability || 'Available')}" 
+                               placeholder="e.g., Open for commissions, Available worldwide"
+                               style="width:100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem;">
+                        <p style="font-size: 0.7rem; color: #7f8c8d; margin-top: 0.25rem;">💡 Example: "Open for commissions", "Available worldwide"</p>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2c3e50;">Phone / WhatsApp</label>
+                        <input type="tel" id="editPhone" value="${escapeHtml(loggedInArtist.phone || '')}" 
+                               placeholder="+91 98765 43210"
+                               style="width:100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #2c3e50;">Website / Instagram</label>
+                        <input type="url" id="editWebsite" value="${escapeHtml(loggedInArtist.website || '')}" 
+                               placeholder="https://instagram.com/username"
+                               style="width:100%; padding: 12px 15px; border: 2px solid #e9ecef; border-radius: 12px; font-size: 1rem;">
+                    </div>
+                </div>
+                
+               
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button onclick="saveProfileChanges()" 
+                            style="flex: 1; padding: 12px; background: linear-gradient(135deg, #ff6b6b, #ff8e8e); color: white; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                        💾 Save Changes
+                    </button>
+                    <button onclick="closeEditModal()" 
+                            style="flex: 1; padding: 12px; background: #95a5a6; color: white; border: none; border-radius: 30px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s;">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+            document.body.appendChild(modal);
+            window.currentEditModal = modal;
+            window.tempProfilePhoto = loggedInArtist.imageData || null;
+
+            // Add animation styles if not exist
+            if (!document.getElementById('modalStyles')) {
+                const style = document.createElement('style');
+                style.id = 'modalStyles';
+                style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes slideUp {
+                from { opacity: 0; transform: translateY(30px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            input:focus, textarea:focus {
+                outline: none;
+                border-color: #ff6b6b !important;
+                box-shadow: 0 0 0 3px rgba(255,107,107,0.1);
+            }
+        `;
+                document.head.appendChild(style);
+            }
+        };
+        window.closeEditModal = function () {
+            if (window.currentEditModal) {
+                window.currentEditModal.remove();
+                window.currentEditModal = null;
+            }
+        };
+
+        window.changeProfilePhoto = function () {
+            document.getElementById('profilePhotoInput').click();
+            document.getElementById('profilePhotoInput').onchange = function (e) {
+                const file = e.target.files[0];
+                if (file && file.type.match('image.*')) {
+                    if (file.size > 2 * 1024 * 1024) { alert('File too large! Max 2MB'); return; }
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        window.tempProfilePhoto = e.target.result;
+                        document.getElementById('profilePhotoPreview').innerHTML = `<img src="${e.target.result}" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        };
+
+        window.saveProfileChanges = async function () {
+            const newName = document.getElementById('editName')?.value;
+            const newBio = document.getElementById('editBio')?.value;
+            const newAvailability = document.getElementById('editAvailability')?.value;
+            const newPhone = document.getElementById('editPhone')?.value;
+            const newWebsite = document.getElementById('editWebsite')?.value;
+
+            if (!newName) { alert('Name cannot be empty!'); return; }
+
+            try {
+                await updateArtist(loggedInArtist.artistId, {
+                    name: newName,
+                    bio: newBio,
+                    availability: newAvailability,
+                    phone: newPhone,
+                    website: newWebsite,
+                    imageData: window.tempProfilePhoto
+                });
+
+                // Update session
+                loggedInArtist.name = newName;
+                loggedInArtist.bio = newBio;
+                loggedInArtist.availability = newAvailability;
+                loggedInArtist.phone = newPhone;
+                loggedInArtist.website = newWebsite;
+                if (window.tempProfilePhoto) loggedInArtist.imageData = window.tempProfilePhoto;
+                sessionStorage.setItem('loggedInArtist', JSON.stringify(loggedInArtist));
+
+                alert('✅ Profile updated!');
+                closeEditModal();
+                loadDashboard();
+            } catch (error) {
+                alert(`❌ Update failed: ${error.message}`);
+            }
+        };
+
+        // ========== IMAGE PREVIEW ==========
+        document.getElementById('artworkFile').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file && file.type.match('image.*')) {
+                if (file.size > 5 * 1024 * 1024) { alert('File too large! Max 5MB'); return; }
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    currentArtworkImage = e.target.result;
+                    document.getElementById('previewImg').src = currentArtworkImage;
+                    document.getElementById('imagePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // ========== NAVIGATION ==========
+        function switchSection(sectionId) {
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
+            document.querySelectorAll('.content-section').forEach(content => content.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            const pageTitles = { overview: 'Dashboard Overview', upload: 'Upload Artwork', myartworks: 'My Artworks', profile: 'My Profile', orders: 'Orders', analytics: 'Analytics', commissions: 'Commissions' };
+            document.getElementById('pageTitle').textContent = pageTitles[sectionId] || 'Dashboard';
+            if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+        }
+
+        // ✅ Check if admin trying to access
+        const isAdmin = sessionStorage.getItem('isAdmin') === 'true';
+        if (isAdmin) {
+            alert('Admin cannot access artist dashboard!');
+            window.location.href = 'admin.html';
+        }
+
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = item.dataset.section;
+                    if (section) switchSection(section);
+                });
+            });
+        }
+
+        window.toggleSidebar = function () { document.getElementById('sidebar').classList.toggle('open'); };
+
+        // ========== LOGOUT ==========
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            sessionStorage.removeItem('loggedInArtist');
+            sessionStorage.removeItem('token');
+            alert('👋 Logged out successfully!');
+            window.location.href = 'index.html';
+        });
+
+        window.getArtistId = getArtistId;
+        window.switchSection = switchSection;
+
+        // ========== INIT ==========
+        async function init() {
+            await loadDashboard();
+            setupNavigation();
+        }
+
+        window.addEventListener('load', function () {
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js failed to load! Using fallback.');
+                document.getElementById('analytics').innerHTML = `
+                <div style="text-align:center; padding:2rem;">
+                    <p>📊 Analytics data:</p>
+                    <p>Monthly Income: ₹1,200, ₹1,900, ₹3,000, ₹2,500, ₹4,200, ₹3,800</p>
+                    <p>Profile Views: 450, 620, 890, 1,200, 1,800, 2,100</p>
+                </div>
+            `;
+            }
+        });
+
+        init();
+    </script>
+</body>
+
+</html>

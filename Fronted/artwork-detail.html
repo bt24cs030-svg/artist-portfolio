@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork Detail | ArtHub</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+        }
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: white;
+            color: #2c3e50;
+            padding: 12px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        .back-home:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .detail-container {
+            max-width: 1000px;
+            margin: 5rem auto;
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .artwork-image {
+            width: 100%;
+            height: 400px;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .artwork-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .artwork-image:hover img {
+            transform: scale(1.05);
+        }
+        .artwork-info {
+            padding: 2rem;
+        }
+        .artwork-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        .artwork-price {
+            font-size: 2rem;
+            color: #27ae60;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+        .artwork-meta {
+            display: flex;
+            gap: 2rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+            padding: 1rem 0;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+        }
+        .artwork-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #7f8c8d;
+        }
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #ff4757;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+        .btn-secondary {
+            background: #2c3e50;
+            color: white;
+            margin-left: 1rem;
+        }
+        .btn-secondary:hover {
+            background: #1e2a36;
+            transform: translateY(-2px);
+        }
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #7f8c8d;
+        }
+        .error-container {
+            text-align: center;
+            padding: 3rem;
+        }
+        .error-container h1 {
+            font-size: 2rem;
+            color: #e74c3c;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .detail-container {
+                margin: 1rem;
+                border-radius: 20px;
+            }
+            .artwork-image {
+                height: 250px;
+            }
+            .artwork-title {
+                font-size: 1.5rem;
+            }
+            .artwork-price {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="javascript:history.back()" class="back-home">← Back</a>
+    
+    <div class="detail-container" id="artworkDetail">
+        <div class="loading">Loading artwork details...</div>
+    </div>
+
+    <script type="module">
+        import { getAllArtworks, getArtistById } from './api.js';
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const artworkId = urlParams.get('id');
+        
+        async function loadArtworkDetail() {
+            const container = document.getElementById('artworkDetail');
+            
+            if (!artworkId) {
+                container.innerHTML = `
+                    <div class="error-container">
+                        <h1>❌ No Artwork ID Specified</h1>
+                        <p>Please provide a valid artwork ID.</p>
+                        <a href="index.html" class="btn btn-primary" style="margin-top:1rem;">← Back to Home</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // ✅ FIX: Handle both array and paginated response
+                const result = await getAllArtworks();
+                console.log('API Response:', result);
+                
+                let artworks = [];
+                if (Array.isArray(result)) {
+                    artworks = result;
+                } else if (result && result.data && Array.isArray(result.data)) {
+                    artworks = result.data;
+                } else {
+                    throw new Error('Invalid API response format');
+                }
+                
+                const artwork = artworks.find(a => a.artwork_id === artworkId);
+                
+                if (!artwork) {
+                    container.innerHTML = `
+                        <div class="error-container">
+                            <h1>❌ Artwork Not Found</h1>
+                            <p>The artwork you're looking for doesn't exist or has been removed.</p>
+                            <p><strong>Artwork ID:</strong> ${artworkId}</p>
+                            <a href="index.html" class="btn btn-primary" style="margin-top:1rem;">Browse Gallery</a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Get artist details
+                let artist = null;
+                try {
+                    artist = await getArtistById(artwork.artist_id);
+                } catch (e) {
+                    console.log('Artist not found:', e);
+                }
+                
+                // Get image HTML
+                let imageHtml = '';
+                if (artwork.image_url) {
+                    imageHtml = `<img src="${artwork.image_url}" alt="${artwork.title}">`;
+                } else if (artwork.image_data) {
+                    imageHtml = `<img src="${artwork.image_data}" alt="${artwork.title}">`;
+                } else {
+                    imageHtml = `<div style="font-size:5rem;">🎨</div>`;
+                }
+                
+                // Get year
+                const year = artwork.created_at ? new Date(artwork.created_at).getFullYear() : new Date().getFullYear();
+                
+                // Render artwork detail
+                container.innerHTML = `
+                    <div class="artwork-image" id="artworkImage">
+                        ${imageHtml}
+                    </div>
+                    <div class="artwork-info">
+                        <h1 class="artwork-title">${escapeHtml(artwork.title)}</h1>
+                        
+                        <div class="artwork-meta">
+                            <div class="artwork-meta-item">
+                                <span>🎨</span>
+                                <span>By: <strong>${escapeHtml(artist ? artist.name : 'Anonymous')}</strong></span>
+                            </div>
+                            <div class="artwork-meta-item">
+                                <span>📁</span>
+                                <span>Category: ${getCategoryDisplay(artwork.category)}</span>
+                            </div>
+                            <div class="artwork-meta-item">
+                                <span>📅</span>
+                                <span>Year: ${year}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="artwork-price">
+                            ₹${artwork.price.toLocaleString()}
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <button class="btn btn-primary" id="addToCartBtn">🛒 Add to Cart</button>
+                            <button class="btn btn-secondary" id="buyNowBtn">💳 Buy Now</button>
+                        </div>
+                        
+                        <div style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <p style="color: #7f8c8d; font-size: 0.9rem;">
+                                <strong>Artist ID:</strong> ${escapeHtml(artwork.artist_id)}<br>
+                                <strong>Artwork ID:</strong> ${escapeHtml(artwork.artwork_id)}
+                            </p>
+                        </div>
+                    </div>
+                `;
+                
+                // Add event listeners
+                document.getElementById('addToCartBtn').onclick = () => addToCart(artwork);
+                document.getElementById('buyNowBtn').onclick = () => buyNow(artwork);
+                
+            } catch (error) {
+                console.error('Error loading artwork:', error);
+                container.innerHTML = `
+                    <div class="error-container">
+                        <h1>❌ Error Loading Artwork</h1>
+                        <p>${error.message}</p>
+                        <a href="index.html" class="btn btn-primary" style="margin-top:1rem;">← Back to Home</a>
+                    </div>
+                `;
+            }
+        }
+        
+        function addToCart(artwork) {
+            // Get existing cart
+            let cart = JSON.parse(localStorage.getItem('artCart') || '[]');
+            
+            const existing = cart.find(i => i.id === artwork.artwork_id);
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id: artwork.artwork_id,
+                    title: artwork.title,
+                    price: artwork.price,
+                    quantity: 1,
+                    imageData: artwork.image_data || artwork.image_url
+                });
+            }
+            
+            localStorage.setItem('artCart', JSON.stringify(cart));
+            
+            // Update cart count display if function exists
+            if (typeof updateCartDisplay === 'function') {
+                updateCartDisplay();
+            }
+            
+            showToast(`✅ "${artwork.title}" added to cart!`);
+        }
+        
+        function buyNow(artwork) {
+            // Add to cart first
+            let cart = JSON.parse(localStorage.getItem('artCart') || '[]');
+            const existing = cart.find(i => i.id === artwork.artwork_id);
+            
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                cart.push({
+                    id: artwork.artwork_id,
+                    title: artwork.title,
+                    price: artwork.price,
+                    quantity: 1,
+                    imageData: artwork.image_data || artwork.image_url
+                });
+            }
+            
+            localStorage.setItem('artCart', JSON.stringify(cart));
+            
+            // Show payment modal
+            const total = artwork.price;
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.7); display: flex; align-items: center;
+                justify-content: center; z-index: 20000; backdrop-filter: blur(3px);
+            `;
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 25px; max-width: 400px; width: 90%; text-align: center; padding: 2rem;">
+                    <div style="font-size: 3rem;">💳</div>
+                    <h2>Demo Payment</h2>
+                    <p><strong>${escapeHtml(artwork.title)}</strong></p>
+                    <p style="font-size: 1.5rem; color: #27ae60;">₹${total}</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button onclick="processDemoPayment()" style="flex:1; background:#27ae60; color:white; border:none; padding:10px; border-radius:25px; cursor:pointer;">Pay Now</button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove()" style="flex:1; background:#95a5a6; color:white; border:none; padding:10px; border-radius:25px; cursor:pointer;">Cancel</button>
+                    </div>
+                    <p style="font-size:0.7rem; margin-top:1rem;">🎓 Demo Transaction • No Real Money</p>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            window.processDemoPayment = function() {
+                const orderId = 'ORD' + Date.now().toString().slice(-8);
+                const paymentId = 'DEMO' + Math.random().toString(36).substr(2, 8).toUpperCase();
+                
+                // Save order
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                orders.push({
+                    id: orderId,
+                    paymentId: paymentId,
+                    artworkTitle: artwork.title,
+                    amount: total,
+                    status: 'completed',
+                    date: new Date().toISOString()
+                });
+                localStorage.setItem('orders', JSON.stringify(orders));
+                
+                // Clear cart for this item
+                let cart = JSON.parse(localStorage.getItem('artCart') || '[]');
+                cart = cart.filter(i => i.id !== artwork.artwork_id);
+                localStorage.setItem('artCart', JSON.stringify(cart));
+                
+                if (typeof updateCartDisplay === 'function') updateCartDisplay();
+                
+                alert(`🎉 Order Placed Successfully!\n\nOrder ID: ${orderId}\nTotal: ₹${total}\n\nThank you for supporting artists!`);
+                window.location.href = 'index.html';
+            };
+        }
+        
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.cssText = `
+                position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+                background: #2c3e50; color: white; padding: 12px 24px;
+                border-radius: 40px; z-index: 1200; font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                animation: fadeInUp 0.3s ease;
+            `;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+        
+        function getCategoryDisplay(category) {
+            const map = {
+                painting: '🖼️ Painting',
+                photography: '📷 Photography',
+                music: '🎵 Music',
+                'digital-art': '💻 Digital Art',
+                sculpture: '🗿 Sculpture',
+                video: '🎥 Video Art'
+            };
+            return map[category] || category;
+        }
+        
+        // Load artwork detail
+        loadArtworkDetail();
+    </script>
+</body>
+</html>
