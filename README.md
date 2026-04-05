@@ -53,17 +53,26 @@ artist-portfolio/
 └── README.md
 
 ---
-
 ## 📂 API Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | /api/register | Register artist |
-| POST | /api/login | Login |
-| GET | /api/artists | Get all artists |
-| POST | /api/artworks | Upload artwork |
-| POST | /api/orders | Create order |
-
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|----------------|
+| GET | /api/test | Test API connection | No |
+| POST | /api/register | Register new artist | No |
+| POST | /api/login | Login artist | No |
+| POST | /api/logout | Logout artist | Yes (JWT) |
+| GET | /api/artists | Get all artists (paginated) | No |
+| GET | /api/artists/:artistId | Get single artist by ID | No |
+| PUT | /api/artists/:artistId | Update artist profile | Yes (Owner only) |
+| POST | /api/artworks | Upload new artwork | Yes (JWT) |
+| DELETE | /api/artworks/:artworkId | Delete artwork | Yes (Owner only) |
+| GET | /api/artworks | Get all artworks (search, filter, pagination) | No |
+| GET | /api/artworks/artist/:artistId | Get artworks by specific artist | No |
+| POST | /api/orders | Create new order | Yes (JWT) |
+| PUT | /api/orders/:orderId/status | Update order status | Yes (Admin/Artist) |
+| POST | /api/reviews | Add review for artist | No |
+| GET | /api/reviews/:artistId | Get all reviews for an artist | No |
+| GET | /api/dashboard/:artistId | Get artist dashboard stats | Yes (Owner only) |
 ---
 
 ## ⚙️ Setup Instructions
